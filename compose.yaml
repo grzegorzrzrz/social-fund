@@ -1,0 +1,42 @@
+services:
+  db:
+      image: "oracle/database:12.1.0.2-ee"
+      restart: always
+      environment: 
+        - "ORACLE_PWD=oracle"
+        # schema of the dump you want to import
+        # - "SOURCE_SCHEMA=./database/create_database.ddl"
+        # tablespace of the dump you want to import
+        # - "SOURCE_TABLESPACE=change-or-delete-me"
+      ports:
+        - '1521:1521'
+      expose:
+        - 1521
+      healthcheck:
+        test: ora_isready
+        interval: 10s
+        retries: 5
+        start_period: 5s
+        timeout: 10s
+      volumes:
+        - ./database/setup-scripts:/opt/oracle/scripts/setup
+        - ./database/dump:/opt/oracle/dump
+      # volumes:
+      #   - ./database/create_database.ddl:/docker-entrypoint-initdb.d/create_tables.sql
+      #   - ./database/insert_example_data.sql:/docker-entrypoint-initdb.d/insert_data.sql
+  app:
+    build:
+      context: app
+      target: app-build
+    ports:
+      - '8000:8000'
+    expose:
+      - 8000
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      - DB_NAME=oracle
+      - DB_USERNAME=oracle
+      - DB_PASSWD=oracle
+      - DB_PORT=1521
