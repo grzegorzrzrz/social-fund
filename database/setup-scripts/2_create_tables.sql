@@ -1,3 +1,4 @@
+connect c##develop/oracle
 
 CREATE SEQUENCE adres_korespondencji_adres_kor START WITH 1 NOCACHE ORDER;
 
