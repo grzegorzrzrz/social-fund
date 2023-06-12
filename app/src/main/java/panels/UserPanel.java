@@ -8,7 +8,7 @@ import java.awt.*;
 import java.text.MessageFormat;
 
 @Getter
-public class MainPanel extends JFrame
+public class UserPanel extends JFrame
 {
     private int permissionLevel;
     public JButton login;
@@ -21,7 +21,7 @@ public class MainPanel extends JFrame
     private JButton registerButton;
     private JButton borrowBooks;
     private JButton addCopy;
-    public MainPanel(int permissionLevel, String username)
+    public UserPanel(int permissionLevel, String username)
     {
         this.permissionLevel = permissionLevel;
         this.username = username;
@@ -86,7 +86,7 @@ public class MainPanel extends JFrame
         splitPane.setBottomComponent(centralPanel);
         add(splitPane);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        setTitle("Library");
+        setTitle("Fundusz - użytkownik");
         setVisible(true);
     }
 }

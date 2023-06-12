@@ -18,7 +18,8 @@ public class App {
     private int userID = 0;
     private String username = "";
     public App(){
-        Run();
+
+        Login();
     }
 
     /**
@@ -26,57 +27,26 @@ public class App {
      */
     public void Run()
     {
-        MainPanel mainPanel = new MainPanel(permissionLevel, username);
-        // listeners for panels that are visible for every permission level
-
-        mainPanel.getViewLibrariesInfo().addActionListener(e -> {
-            ViewLibInfo();
-            mainPanel.dispose();
-        });
-        mainPanel.login.addActionListener(e -> {
-            Login();
-            mainPanel.dispose();
-        });
-
         //listeners for panels that are visible on specific permission level
         switch(permissionLevel){
             case 0 ->{
-                mainPanel.login.setText("Login");
-                mainPanel.getBrowseBooks().addActionListener(e -> {
+                UserPanel userPanel = new UserPanel(permissionLevel, username);
+                userPanel.login.setText("Login");
+                userPanel.getBrowseBooks().addActionListener(e -> {
                     BrowseBooks();
-                    mainPanel.dispose();
+                    userPanel.dispose();
                 });
-                mainPanel.getRegisterButton().addActionListener(e -> {
+                userPanel.getRegisterButton().addActionListener(e -> {
                     Register();
-                    mainPanel.dispose();
+                    userPanel.dispose();
                 });
             }
-            case 1 ->{
-                mainPanel.login.setText("Logout");
-                mainPanel.getBrowseBooks().addActionListener(e -> {
+            case 1 -> {
+                AdminPanel adminPanel = new AdminPanel(permissionLevel, username);
+                adminPanel.login.setText("Logout");
+                adminPanel.getBrowseBooks().addActionListener(e -> {
                     BrowseBooks();
-                    mainPanel.dispose();
-                });
-
-            }
-            case 2 -> {
-                mainPanel.login.setText("Logout");
-
-                mainPanel.getReturnBook().addActionListener(e -> {
-                    ReturnBook();
-                    mainPanel.dispose();
-                });
-                mainPanel.getAddCopy().addActionListener(e->{
-                    AddCopy();
-                    mainPanel.dispose();
-                });
-                mainPanel.getRegisterBook().addActionListener(e -> {
-                    RegisterBook();
-                    mainPanel.dispose();
-                });
-                mainPanel.getBorrowBooks().addActionListener(e -> {
-                    BorowBook();
-                    mainPanel.dispose();
+                    adminPanel.dispose();
                 });
             }
         }
@@ -296,23 +266,23 @@ public class App {
      *             con - Takes 3 additional arguments with information about url, username and password to change database to which app connects to
      */
     public static void main(String[] args){
-        if(args.length > 0)
-        {
-            if (args[0].equals("res"))
-            {
-                Settings.getInstance().database = new DatabaseBuilder().build();
-                Settings.getInstance().database.initializeData();
-            }
-            else if (args[0].equals("con"))
-            {
-                Settings.getInstance().database = new DatabaseBuilder().setDBURL(args[1]).setDBUSERNAME(args[2]).setDBPASSWORD(args[3]).build();
-                Settings.getInstance().database.initializeData();
-            }
-        }
-
-        else {
-            Settings.getInstance().database = new DatabaseBuilder().build();
-        }
+//        if(args.length > 0)
+//        {
+//            if (args[0].equals("res"))
+//            {
+//                Settings.getInstance().database = new DatabaseBuilder().build();
+//                Settings.getInstance().database.initializeData();
+//            }
+//            else if (args[0].equals("con"))
+//            {
+//                Settings.getInstance().database = new DatabaseBuilder().setDBURL(args[1]).setDBUSERNAME(args[2]).setDBPASSWORD(args[3]).build();
+//                Settings.getInstance().database.initializeData();
+//            }
+//        }
+//
+//        else {
+//            Settings.getInstance().database = new DatabaseBuilder().build();
+//        }
         try {
 
             UIManager.setLookAndFeel("javax.swing.plaf.nimbus.NimbusLookAndFeel");
@@ -320,6 +290,7 @@ public class App {
         catch (Exception e){
             // will use the default "Metal" Look and Feel instead
         }
+        Settings.getInstance().database = new MockDatabase();
         new App();
     }
     private void handleMessagePanel(JFrame callingPanel, String textToShow)

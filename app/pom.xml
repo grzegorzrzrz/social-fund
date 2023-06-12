@@ -5,7 +5,7 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>PAP22Z-Z32</groupId>
-    <artifactId>biblioteka</artifactId>
+    <artifactId>funduszSocjalny</artifactId>
     <version>0.1.0</version>
 
     <build>
