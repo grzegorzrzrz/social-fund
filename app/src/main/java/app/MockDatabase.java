@@ -1,9 +1,11 @@
 package app;
 
 import classes.*;
+import lib.InteractiveJTextField;
 
 import java.sql.ResultSet;
 import java.util.ArrayList;
+import java.util.Vector;
 
 public class MockDatabase {
     public int[] validateLoginData(String username, char[] password) {
@@ -59,7 +61,9 @@ public class MockDatabase {
     }
 
     public ArrayList<Book> getBooks(String s, String s1, String s2, String s3) {
-        return null;
+        ArrayList<Book> a = new ArrayList<Book>();
+        a.add(new Book(1, "aga", "aga", 1, "aga", 1,"aga"));
+        return a;
     }
 
     public boolean isPenalty(int userId) {
@@ -75,5 +79,22 @@ public class MockDatabase {
     }
 
     public void orderBook(String user, int copyID) {
+    }
+
+    public ArrayList<String> getFormNames() {
+        return new ArrayList<String>() {
+            {
+                add("aha");
+                add("aga");
+            }
+        };
+    }
+
+    public String disableForm(String formName) {
+        return "Successfully removed the form";
+    }
+
+    public String CreateNewForm(String formName, Vector<Vector> dataVector) {
+        return "Successfully added a new form";
     }
 }

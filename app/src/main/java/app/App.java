@@ -8,6 +8,7 @@ import panels.*;
 
 import javax.swing.*;
 import java.util.Scanner;
+import java.util.Set;
 
 
 public class App {
@@ -18,7 +19,6 @@ public class App {
     private int userID = 0;
     private String username = "";
     public App(){
-
         Login();
     }
 
@@ -41,15 +41,47 @@ public class App {
                     userPanel.dispose();
                 });
             }
-            case 1 -> {
+            case 1 -> { // logged as an admin
                 AdminPanel adminPanel = new AdminPanel(permissionLevel, username);
                 adminPanel.login.setText("Logout");
-                adminPanel.getBrowseBooks().addActionListener(e -> {
-                    BrowseBooks();
+                adminPanel.getAddForm().addActionListener(e -> {
+                    AddForm();
+                    adminPanel.dispose();
+                });
+                adminPanel.getDeactivateForm().addActionListener(e -> {
+                    DeactivateForm();
+                    adminPanel.dispose();
+                });
+                adminPanel.getGenerateReport().addActionListener(e -> {
+                    GenerateAnalyticReport();
                     adminPanel.dispose();
                 });
             }
         }
+    }
+
+    private void DeactivateForm() {
+        DeactivateFormPanel deactivateFormPanel = new DeactivateFormPanel((Settings.getInstance().database.getFormNames()).toArray(new String[0]));
+        deactivateFormPanel.getCancelButton().addActionListener(e -> disposeSubPanel(deactivateFormPanel));
+        deactivateFormPanel.getAcceptButton().addActionListener(e ->{
+            String formName = (String)deactivateFormPanel.getChooseForm().getSelectedItem();
+            String message = Settings.getInstance().database.disableForm(formName);
+            handleMessagePanel(deactivateFormPanel, message);
+        });
+    }
+
+    private void AddForm() {
+        AddFormPanel addFormPanel = new AddFormPanel();
+        addFormPanel.getCancelButton().addActionListener(e-> disposeSubPanel(addFormPanel));
+        addFormPanel.getAcceptButton().addActionListener(e ->{
+            String message = Settings.getInstance().database.CreateNewForm(addFormPanel.getFormName().getText(), addFormPanel.getFormTableModel().getDataVector());
+            handleMessagePanel(addFormPanel, message);
+        });
+    }
+
+    private void GenerateAnalyticReport() {
+        GenerateReportPanel generateReportPanel = new GenerateReportPanel();
+
     }
 
     private void AddCopy() {
