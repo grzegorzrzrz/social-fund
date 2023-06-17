@@ -15,7 +15,7 @@ LOGGING;
 ALTER TABLE adres_korespondencji ADD CONSTRAINT adres_korespondencji_pk PRIMARY KEY ( adres_korespondencji_id );
 
 
---  ERROR: UK name length exceeds maximum allowed length(30) 
+--  ERROR: UK name length exceeds maximum allowed length(30)
 ALTER TABLE adres_korespondencji ADD CONSTRAINT adres_korespondencji_id_adress_un UNIQUE ( id_adress );
 
 CREATE TABLE czlonkowie_rodziny (
@@ -35,16 +35,14 @@ CREATE TABLE historia_statusow_wnioskow (
     data                       DATE NOT NULL,
     wartosc_poprzednia_statusu VARCHAR2(15) NOT NULL,
     nowa_wartosc_statusu       VARCHAR2(15) NOT NULL,
-    wniosek_id_wniosku         NUMBER NOT NULL,
-    id_wersji                  NUMBER,
-    status                     NUMBER
+    wniosek_id_wniosku         NUMBER NOT NULL
 )
 LOGGING;
 
 ALTER TABLE historia_statusow_wnioskow ADD CONSTRAINT historia_statusow_wnioskow_pk PRIMARY KEY ( id_historii );
 
-CREATE TABLE opis_funduszu ( 
---  ERROR: Column name length exceeds maximum allowed length(30) 
+CREATE TABLE opis_funduszu (
+--  ERROR: Column name length exceeds maximum allowed length(30)
     typ_srodkow_encja_slownikowa_nazwa_funduszu VARCHAR2(30) NOT NULL,
     rok                                         NUMBER NOT NULL,
     kwota_przyznana                             NUMBER NOT NULL,
@@ -75,15 +73,15 @@ LOGGING;
 
 ALTER TABLE pola_formularzu ADD CONSTRAINT pola_formularzu_pk PRIMARY KEY ( id_pola );
 
---  ERROR: Table name length exceeds maximum allowed length(30) 
-CREATE TABLE polaczenie_pomiedzy_formularzami_a_typem_srodkow ( 
---  ERROR: Column name length exceeds maximum allowed length(30) 
+--  ERROR: Table name length exceeds maximum allowed length(30)
+CREATE TABLE polaczenie_pomiedzy_formularzami_a_typem_srodkow (
+--  ERROR: Column name length exceeds maximum allowed length(30)
     typ_srodkow_encja_slownikowa_nazwa_funduszu VARCHAR2(30) NOT NULL,
     "typ_formularzu_id_formularzu"              NUMBER NOT NULL
 )
 LOGGING;
 
---  ERROR: PK name length exceeds maximum allowed length(30) 
+--  ERROR: PK name length exceeds maximum allowed length(30)
 ALTER TABLE polaczenie_pomiedzy_formularzami_a_typem_srodkow ADD CONSTRAINT polaczenie_pomiedzy_formularzami_a_typem_srodkow_pk PRIMARY
 KEY ( typ_srodkow_encja_slownikowa_nazwa_funduszu,
                                                                                                                                 "typ_formularzu_id_formularzu"
@@ -120,7 +118,7 @@ CREATE TABLE typ_srodkow_encja_slownikowa (
 )
 LOGGING;
 
---  ERROR: PK name length exceeds maximum allowed length(30) 
+--  ERROR: PK name length exceeds maximum allowed length(30)
 ALTER TABLE typ_srodkow_encja_slownikowa ADD CONSTRAINT typ_srodkow_encja_slownikowa_pk PRIMARY KEY ( nazwa_funduszu );
 
 CREATE TABLE uzytkownicy (
@@ -128,22 +126,21 @@ CREATE TABLE uzytkownicy (
     imie           VARCHAR2(20) NOT NULL,
     nazwisko       VARCHAR2(20) NOT NULL,
     haslo          VARCHAR2(40) NOT NULL,
-    login          VARCHAR2(30) NOT NULL
-)
+    login          VARCHAR2(30) NOT NULL)
 LOGGING;
 
 ALTER TABLE uzytkownicy ADD CONSTRAINT uzytkownicy_pk PRIMARY KEY ( id_uzytkownika );
-
-CREATE TABLE wniosek ( 
---  ERROR: Column name length exceeds maximum allowed length(30) 
+ALTER TABLE uzytkownicy ADD CONSTRAINT unikalny_login UNIQUE (login);
+CREATE TABLE wniosek (
+--  ERROR: Column name length exceeds maximum allowed length(30)
     typ_srodkow_encja_slownikowa_nazwa_funduszu VARCHAR2(30) NOT NULL,
     id_wniosku                                  NUMBER NOT NULL,
     status                                      VARCHAR2(15) NOT NULL,
     data_zlozenia                               DATE NOT NULL,
     zawartosc_formularza                        VARCHAR2(300) NOT NULL,
     wnioskodawcy_id_uzytkownika                 NUMBER NOT NULL,
-    rozpatrujacy_id_uzytkownika                 NUMBER NOT NULL,
-    wyplata_id_wyplaty                          NUMBER NOT NULL
+    rozpatrujacy_id_uzytkownika                 NUMBER,
+    wyplata_id_wyplaty                          NUMBER
 )
 LOGGING;
 
@@ -156,11 +153,11 @@ ALTER TABLE wniosek ADD CONSTRAINT wniosek_pk PRIMARY KEY ( id_wniosku );
 
 CREATE TABLE wnioskodawcy (
     id_uzytkownika                               NUMBER NOT NULL,
-    firma                                        VARCHAR2(30) NOT NULL,
-    pesel                                        VARCHAR2(30) NOT NULL,
+    firma                                        VARCHAR2(30),
+    pesel                                        VARCHAR2(30),
     data_urodzenia                               DATE NOT NULL,
-    numer_konta_bankowego                        NUMBER, 
---  ERROR: Column name length exceeds maximum allowed length(30) 
+    numer_konta_bankowego                        NUMBER,
+--  ERROR: Column name length exceeds maximum allowed length(30)
     adres_korespondencji_adres_korespondencji_id NUMBER
 )
 LOGGING;
@@ -176,49 +173,49 @@ LOGGING;
 
 ALTER TABLE wyplata ADD CONSTRAINT wyplata_pk PRIMARY KEY ( id_wyplaty );
 
---  ERROR: FK name length exceeds maximum allowed length(30) 
+--  ERROR: FK name length exceeds maximum allowed length(30)
 ALTER TABLE czlonkowie_rodziny
     ADD CONSTRAINT czlonkowie_rodziny_wnioskodawcy_fk FOREIGN KEY ( wnioskodawcy_id_uzytkownika )
         REFERENCES wnioskodawcy ( id_uzytkownika )
     NOT DEFERRABLE;
 
---  ERROR: FK name length exceeds maximum allowed length(30) 
+--  ERROR: FK name length exceeds maximum allowed length(30)
 ALTER TABLE historia_statusow_wnioskow
     ADD CONSTRAINT historia_statusow_wnioskow_wniosek_fk FOREIGN KEY ( wniosek_id_wniosku )
         REFERENCES wniosek ( id_wniosku )
     NOT DEFERRABLE;
 
---  ERROR: FK name length exceeds maximum allowed length(30) 
+--  ERROR: FK name length exceeds maximum allowed length(30)
 ALTER TABLE opis_funduszu
     ADD CONSTRAINT opis_funduszu_typ_srodkow_encja_slownikowa_fk FOREIGN KEY ( typ_srodkow_encja_slownikowa_nazwa_funduszu )
         REFERENCES typ_srodkow_encja_slownikowa ( nazwa_funduszu )
     NOT DEFERRABLE;
 
---  ERROR: FK name length exceeds maximum allowed length(30) 
+--  ERROR: FK name length exceeds maximum allowed length(30)
 ALTER TABLE oswiadczenie_zarobkowe
     ADD CONSTRAINT oswiadczenie_zarobkowe_wnioskodawcy_fk FOREIGN KEY ( wnioskodawcy_id_uzytkownika )
         REFERENCES wnioskodawcy ( id_uzytkownika )
     NOT DEFERRABLE;
 
---  ERROR: FK name length exceeds maximum allowed length(30) 
+--  ERROR: FK name length exceeds maximum allowed length(30)
 ALTER TABLE pola_formularzu
     ADD CONSTRAINT pola_formularzu_typ_formularzu_fk FOREIGN KEY ( "typ_formularzu_id_formularzu" )
         REFERENCES typ_formularzu ( "id_formularzu" )
     NOT DEFERRABLE;
 
---  ERROR: FK name length exceeds maximum allowed length(30) 
+--  ERROR: FK name length exceeds maximum allowed length(30)
 ALTER TABLE pola_formularzu
     ADD CONSTRAINT pola_formularzu_typ_pol_formularzu_fk FOREIGN KEY ( typ_pol_formularzu_id_typu )
         REFERENCES typ_pol_formularzu ( id_typu )
     NOT DEFERRABLE;
 
---  ERROR: FK name length exceeds maximum allowed length(30) 
+--  ERROR: FK name length exceeds maximum allowed length(30)
 ALTER TABLE polaczenie_pomiedzy_formularzami_a_typem_srodkow
     ADD CONSTRAINT polaczenie_pomiedzy_formularzami_a_typem_srodkow_typ_formularzu_fk FOREIGN KEY ( "typ_formularzu_id_formularzu" )
         REFERENCES typ_formularzu ( "id_formularzu" )
     NOT DEFERRABLE;
 
---  ERROR: FK name length exceeds maximum allowed length(30) 
+--  ERROR: FK name length exceeds maximum allowed length(30)
 ALTER TABLE polaczenie_pomiedzy_formularzami_a_typem_srodkow
     ADD CONSTRAINT polaczenie_pomiedzy_formularzami_a_typem_srodkow_typ_srodkow_encja_slownikowa_fk FOREIGN KEY ( typ_srodkow_encja_slownikowa_nazwa_funduszu
     )
@@ -235,7 +232,7 @@ ALTER TABLE wniosek
         REFERENCES rozpatrujacy ( id_uzytkownika )
     NOT DEFERRABLE;
 
---  ERROR: FK name length exceeds maximum allowed length(30) 
+--  ERROR: FK name length exceeds maximum allowed length(30)
 ALTER TABLE wniosek
     ADD CONSTRAINT wniosek_typ_srodkow_encja_slownikowa_fk FOREIGN KEY ( typ_srodkow_encja_slownikowa_nazwa_funduszu )
         REFERENCES typ_srodkow_encja_slownikowa ( nazwa_funduszu )
@@ -251,7 +248,7 @@ ALTER TABLE wniosek
         REFERENCES wyplata ( id_wyplaty )
     NOT DEFERRABLE;
 
---  ERROR: FK name length exceeds maximum allowed length(30) 
+--  ERROR: FK name length exceeds maximum allowed length(30)
 ALTER TABLE wnioskodawcy
     ADD CONSTRAINT wnioskodawcy_adres_korespondencji_fk FOREIGN KEY ( adres_korespondencji_adres_korespondencji_id )
         REFERENCES adres_korespondencji ( adres_korespondencji_id )
