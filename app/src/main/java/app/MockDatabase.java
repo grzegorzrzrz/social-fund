@@ -3,6 +3,7 @@ package app;
 import classes.*;
 import lib.InteractiveJTextField;
 
+import java.sql.Date;
 import java.sql.ResultSet;
 import java.util.ArrayList;
 import java.util.Vector;
@@ -96,5 +97,12 @@ public class MockDatabase {
 
     public String CreateNewForm(String formName, Vector<Vector> dataVector) {
         return "Successfully added a new form";
+    }
+
+    public ArrayList<Application> getAplications(String user) {
+        ArrayList<Application> odp= new ArrayList<Application>();
+        Application application= new Application(5,"denied",new Date(123,11,8));
+        odp.add(application);
+        return odp;
     }
 }
