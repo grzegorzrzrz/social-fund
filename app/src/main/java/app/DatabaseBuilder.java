@@ -1,9 +1,9 @@
 package app;
 
 public class DatabaseBuilder {
-    private String DBURL = "localhost:" + System.getenv("DB_PORT");
-    private String DBUSERNAME = System.getenv("DB_USERNAME");
-    private String DBPASSWORD = System.getenv("DB_PASSWD");
+    private String DBURL = "localhost:1521";
+    private String DBUSERNAME = "c##develop";
+    private String DBPASSWORD =  "oracle";
 
     public DatabaseBuilder setDBURL(String dburl) {
         DBURL = dburl;
