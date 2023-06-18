@@ -51,7 +51,7 @@ CREATE TABLE opis_funduszu (
 )
 LOGGING;
 
-ALTER TABLE opis_funduszu ADD CONSTRAINT opis_funduszu_pk PRIMARY KEY ( rok );
+ALTER TABLE opis_funduszu ADD CONSTRAINT opis_funduszu_pk PRIMARY KEY ( typ_srodkow_encja_slownikowa_nazwa_funduszu, rok );
 
 CREATE TABLE oswiadczenie_zarobkowe (
     dochod_na_czlonka_rodziny   NUMBER NOT NULL,
@@ -65,7 +65,7 @@ ALTER TABLE oswiadczenie_zarobkowe ADD CONSTRAINT oswiadczenie_zarobkowe_pk PRIM
 
 CREATE TABLE pola_formularzu (
     id_pola                        NUMBER NOT NULL,
-    nazwa_pola                     VARCHAR2(20) NOT NULL,
+    nazwa_pola                     VARCHAR2(50) NOT NULL,
     typ_pol_formularzu_id_typu     NUMBER NOT NULL,
     typ_formularzu_id_formularzu NUMBER NOT NULL
 )
@@ -97,7 +97,7 @@ LOGGING;
 ALTER TABLE rozpatrujacy ADD CONSTRAINT rozpatrujacy_pk PRIMARY KEY ( id_uzytkownika );
 
 CREATE TABLE typ_formularzu (
-    nazwa_formularzu VARCHAR2(40) NOT NULL,
+    nazwa_formularzu VARCHAR2(50) NOT NULL,
     id_formularzu NUMBER NOT NULL,
     czy_aktywny NUMBER(1) DEFAULT 1 NOT NULL
 )
