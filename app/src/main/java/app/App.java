@@ -1,5 +1,6 @@
 package app;
 
+import classes.Application;
 import classes.Book;
 import classes.Library;
 import classes.User;
@@ -7,6 +8,7 @@ import lib.Settings;
 import panels.*;
 
 import javax.swing.*;
+import java.sql.Date;
 import java.util.Scanner;
 import java.util.Set;
 
@@ -29,19 +31,22 @@ public class App {
     {
         //listeners for panels that are visible on specific permission level
         switch(permissionLevel){
-            case 0 ->{
+            case 0 ->{Login();}
+            case 1 ->{
                 UserPanel userPanel = new UserPanel(permissionLevel, username);
                 userPanel.login.setText("Login");
-                userPanel.getBrowseBooks().addActionListener(e -> {
-                    BrowseBooks();
+                userPanel.myApplication.addActionListener(e -> {
+                    showApplicattions();
                     userPanel.dispose();
                 });
-                userPanel.getRegisterButton().addActionListener(e -> {
-                    Register();
+                userPanel.getAddApplication().addActionListener(e -> {
+                    addApplication();
                     userPanel.dispose();
                 });
+                userPanel.getLogin().addActionListener(e->{userPanel.dispose();Login();});
             }
-            case 1 -> { // logged as an admin
+
+            case 2 -> { // logged as an admin
                 AdminPanel adminPanel = new AdminPanel(permissionLevel, username);
                 adminPanel.login.setText("Logout");
                 adminPanel.getAddForm().addActionListener(e -> {
@@ -60,6 +65,44 @@ public class App {
         }
     }
 
+    private void addApplication() {
+        chooseform chose =new chooseform();
+        chose.getCancelButton().addActionListener(e -> disposeSubPanel(chose));
+        chose.getAcceptButton().addActionListener(e -> {
+            Application application= new Application(5,"denied",new Date(2023,11,8));
+            application.form.formTypeID=(Integer.parseInt(chose.getForm_id().getText()));
+            chose.dispose();
+            fillAplication fill =new fillAplication(application);
+            fill.getCancelButton().addActionListener(m ->disposeSubPanel(fill));
+            fill.getAcceptButton().addActionListener(m->{
+                for (int i=0;i<application.form.getFields().size();i++)
+                {
+                    application.form.fields.get(i).value=fill.pane.get(i).getLeftComponent().toString();
+                }
+                disposeSubPanel(fill);
+            });
+
+        });
+
+    }
+
+
+    private void showApplicattions() {
+        ShowApplications Showapplications= new ShowApplications(username);
+
+        Showapplications.getCancelButton().addActionListener(
+                e ->{ disposeSubPanel(Showapplications);});
+        Showapplications.getAcceptButton().addActionListener(e->{
+            Application application= new Application(5,"denied",new Date(2023,11,8));//getmockdatebase
+            Showapplications.dispose();
+            show prewiev= new show(application);//Settings.getInstance().database.getAplication(aplication id)
+            prewiev.getCancelButton().addActionListener(
+                    m ->{ disposeSubPanel(prewiev);})
+            ;
+        });
+
+
+    }
     private void DeactivateForm() {
         DeactivateFormPanel deactivateFormPanel = new DeactivateFormPanel((Settings.getInstance().database.getFormNames()).toArray(new String[0]));
         deactivateFormPanel.getCancelButton().addActionListener(e -> disposeSubPanel(deactivateFormPanel));
@@ -80,40 +123,13 @@ public class App {
     }
 
     private void GenerateAnalyticReport() {
-        GenerateReportPanel generateReportPanel = new GenerateReportPanel();
+       // GenerateReportPanel generateReportPanel = new GenerateReportPanel();
 
     }
 
-    private void AddCopy() {
-        AddingCopy addingCopy=new AddingCopy();
-        addingCopy.getCancelButton().addActionListener(e -> disposeSubPanel(addingCopy));
-        addingCopy.getAcceptButton().addActionListener(e->{
 
-            Settings.getInstance().database.addCopy(addingCopy.ReturnSelectedBookId(),addingCopy.ReturnSelectedLibraryId());
-            handleMessagePanel(addingCopy, " Adding a book copy successful");
-                }
-                );
-    }
 
-    private void BrowseBooks() {
-        BrowseBookPanel3 browseBookPanel3 = new BrowseBookPanel3(userID);
-        browseBookPanel3.getCancelButton().addActionListener(e -> disposeSubPanel(browseBookPanel3));
-        browseBookPanel3.getSearchButton().addActionListener(e -> browseBookPanel3.fillBooksInfo());
-        browseBookPanel3.getAcceptButton().addActionListener(e -> browseBookPanel3.reserv(username));
-        browseBookPanel3.getPayButton().addActionListener(e-> Settings.getInstance().database.payPenalty(userID));
-    }
 
-    private void ViewLibInfo() {
-        ViewLibInfoPanel viewLibInfo = new ViewLibInfoPanel();
-        viewLibInfo.getChooseLibrary().addActionListener(e -> {
-            viewLibInfo.getStatusInfo().setText("Status: Waiting for the Data from the database");
-            viewLibInfo.getStatusInfo().paintImmediately(viewLibInfo.getStatusInfo().getVisibleRect());
-            Library answer = Settings.getInstance().database.getLibraryInfo(viewLibInfo.getChooseLibrary().getSelectedItem().toString());
-            viewLibInfo.fillLibraryInfo(answer);
-            viewLibInfo.getStatusInfo().setText("Status: Waiting for change");
-        });
-        viewLibInfo.getCancelButton().addActionListener(e -> disposeSubPanel(viewLibInfo));
-    }
     private void Register(){
         RegisterUserPanel registerPanel = new RegisterUserPanel();
         registerPanel.getCancelButton().addActionListener(e -> disposeSubPanel(registerPanel));
@@ -130,120 +146,8 @@ public class App {
             disposeSubPanel(registerPanel);
         });
     }
-    private void BorowBook() {
-        BorrowBookPanel borrowBookPanel = new BorrowBookPanel();
 
-        borrowBookPanel.getCancelButton().addActionListener(e -> disposeSubPanel(borrowBookPanel));
-        borrowBookPanel.getInputUserID().addActionListener(e -> {
-            borrowBookPanel.getResultTableModel().setRowCount(0);
-            String userData = borrowBookPanel.getInputUserID().getText().trim();
-            Scanner sc = new Scanner(userData);
-            if(sc.hasNextInt()){
-                borrowBookPanel.setSearchDataText(userData);
-                borrowBookPanel.getAcceptButton().setEnabled(true);
-                borrowBookPanel.fillResultTable(Settings.getInstance().database.getOrders(Integer.parseInt(userData), "Rezerwacja"));
-            }
-            else{
-                try {
-                    borrowBookPanel.setSearchDataText(Integer.toString(Settings.getInstance().database.getUserID(userData)));
-                    borrowBookPanel.getAcceptButton().setEnabled(true);
 
-                    borrowBookPanel.fillResultTable(Settings.getInstance().database.getOrders(Settings.getInstance().database.getUserID(userData), "Rezerwacja"));
-                }
-                catch (RuntimeException exc ) {
-                    handleMessagePanel(borrowBookPanel, "The Username not found");
-                }
-            }
-        });
-        borrowBookPanel.getAcceptButton().addActionListener(e -> {
-            Settings.getInstance().database.borrowBook(Integer.valueOf(borrowBookPanel.getResultTable().getValueAt(borrowBookPanel.getResultTable().getSelectedRow(),0).toString()));
-            handleMessagePanel(borrowBookPanel,"Successful borrowed book");
-        });
-
-    }
-
-    private void ReturnBook() {
-        ReturnBooksPanel returnBookPanel = new ReturnBooksPanel();
-        returnBookPanel.getCancelButton().addActionListener(e -> disposeSubPanel(returnBookPanel));
-        returnBookPanel.getInputUserID().addActionListener(e -> {
-            returnBookPanel.getResultTableModel().setRowCount(0);
-            String userID = returnBookPanel.getInputUserID().getText().trim();
-            Scanner sc = new Scanner(userID);
-            if(sc.hasNextInt()){
-                returnBookPanel.setSearchDataText(userID);
-                returnBookPanel.getAcceptButton().setEnabled(true);
-                returnBookPanel.fillResultTable(Settings.getInstance().database.getOrders(Integer.parseInt(userID), "Wypozyczona"));
-            }
-            else{
-                returnBookPanel.getAcceptButton().setEnabled(false);
-                handleMessagePanel(returnBookPanel,"The User ID has to be a number");
-            }
-        });
-        returnBookPanel.getAcceptButton().addActionListener(e -> {
-            int selectedRow = returnBookPanel.getResultTable().getSelectedRow();
-            int orderID = (Integer)returnBookPanel.getResultTableModel().getValueAt(selectedRow, returnBookPanel.getResultTable().getColumn("OrderID").getModelIndex());
-
-            finalizeReturnBook(returnBookPanel, orderID, selectedRow);
-        });
-
-    }
-
-    /**
-     * @param returnBookPanel panel who called this function
-     * @param orderID
-     * @param selectedRow row to remove from JTable
-     *                    Handles the choosePenaltyPanel, calls the database method to return the book and removes
-     *                    one row from Jtable
-     */
-    private void finalizeReturnBook(ReturnBooksPanel returnBookPanel, int orderID, int selectedRow)
-    {
-        returnBookPanel.setEnabled(false);
-        ChoosePenaltyPanel choosePenaltyPanel = new ChoosePenaltyPanel(Settings.getInstance().database.getPenalties());
-        choosePenaltyPanel.getCancelButton().addActionListener(e -> {
-            choosePenaltyPanel.dispose();
-            returnBookPanel.setEnabled(true);
-        });
-        choosePenaltyPanel.getAcceptButton().addActionListener(e -> {// will not add any penalties to the user
-            returnBookPanel.getResultTableModel().removeRow(returnBookPanel.getResultTable().getSelectedRow());
-            Settings.getInstance().database.returnBook(orderID, 0);
-            if(returnBookPanel.getResultTableModel().getRowCount() == 0)
-            {
-                returnBookPanel.getAcceptButton().setEnabled(false);
-            }
-            choosePenaltyPanel.dispose();
-            returnBookPanel.setEnabled(true);
-        });
-        choosePenaltyPanel.getAddPenaltyButton().addActionListener(e -> { // will add penalty to the user
-            returnBookPanel.getResultTableModel().removeRow(returnBookPanel.getResultTable().getSelectedRow());
-            int chosenPenaltyID = choosePenaltyPanel.getPenaltyIDVec().elementAt(
-                    choosePenaltyPanel.getPenaltyBox().getSelectedIndex());
-            Settings.getInstance().database.returnBook(orderID, chosenPenaltyID);
-            returnBookPanel.getResultTableModel().removeRow(selectedRow);
-            if(returnBookPanel.getResultTableModel().getRowCount() == 0)
-            {
-                returnBookPanel.getAcceptButton().setEnabled(false);
-            }
-            choosePenaltyPanel.dispose();
-            returnBookPanel.setEnabled(true);
-        });
-    }
-    private void RegisterBook() {
-        RegisterBookPanel registerBookPanel = new RegisterBookPanel();
-        registerBookPanel.getCancelButton().addActionListener(e -> disposeSubPanel(registerBookPanel));
-        registerBookPanel.getAcceptButton().addActionListener(e -> {
-
-            Book book =new Book(0,
-                    registerBookPanel.getBookTitleInput().getText(),
-                    registerBookPanel.getBookAuthorInput().getText(),
-                    Integer.valueOf(registerBookPanel.getBookPagesInput().getText()),
-                    registerBookPanel.getBookISBNInput().getText(),
-                    Integer.valueOf(registerBookPanel.getBookYearInput().getText()),
-                    registerBookPanel.getBookGenreInput().getText());
-            Settings.getInstance().database.addBook(book);
-            disposeSubPanel(registerBookPanel);
-
-        });
-    }
 
     /**
      *  gets information from database if login was successful.
