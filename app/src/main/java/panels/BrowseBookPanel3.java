@@ -42,7 +42,7 @@ public class BrowseBookPanel3  extends BasePanel {
         setPreferredSize(Settings.getInstance().BIG_WINDOW_PREFERRED_SIZE);
         setMinimumSize(Settings.getInstance().BIG_WINDOW_MIN_SIZE);
         setLocation(Settings.getInstance().BIG_WINDOW_LOCATION_X, Settings.getInstance().BIG_WINDOW_LOCATION_Y);
-        if (Settings.getInstance().database.isPenalty(userId))
+        if (Settings.getInstance().mockDatabase.isPenalty(userId))
         {
             statusInfo = new JTextArea("you must pay yours penalties");
         }
@@ -104,7 +104,7 @@ public class BrowseBookPanel3  extends BasePanel {
         getUpperPanel().add(upperSplitPane7);
 
         BookGenre = new JTextArea("Book Genre:");
-        ArrayList<String> temp= Settings.getInstance().database.getGenres();
+        ArrayList<String> temp= Settings.getInstance().mockDatabase.getGenres();
                 temp.add("");
         BookGenreInput = new JComboBox<String>(temp.toArray(new String[temp.size()]));
         BookGenre.setEditable(false);
@@ -122,7 +122,7 @@ public class BrowseBookPanel3  extends BasePanel {
         libName = new JTextArea("lib name:");
         libName.setEditable(false);
 
-        libNameInput = new JComboBox<>(Settings.getInstance().database.getLibrariesNames());
+        libNameInput = new JComboBox<>(Settings.getInstance().mockDatabase.getLibrariesNames());
         JSplitPane upperSplitPane5 = new JSplitPane();
         upperSplitPane5.setResizeWeight(0.5);
         upperSplitPane5.setOrientation(HORIZONTAL_SPLIT);
@@ -148,7 +148,7 @@ public class BrowseBookPanel3  extends BasePanel {
         PayButton= new JButton("Pay");
         PayButton.setEnabled(false);
         PayButton.setMinimumSize(minimumSize);
-        if (Settings.getInstance().database.isPenalty(userId))
+        if (Settings.getInstance().mockDatabase.isPenalty(userId))
         {
             PayButton.setEnabled(true);
 
@@ -191,7 +191,7 @@ public class BrowseBookPanel3  extends BasePanel {
         }
         String libname = libNameInput.getSelectedItem().toString();
 
-        ArrayList<Book> a= Settings.getInstance().database.getBooks(title,Autor, ISBN, Genre);
+        ArrayList<Book> a= Settings.getInstance().mockDatabase.getBooks(title,Autor, ISBN, Genre);
         getBooksInfoTableModel().setRowCount(0);
         for (int i=0;i<a.size();i++)
         {
@@ -211,7 +211,7 @@ public class BrowseBookPanel3  extends BasePanel {
         String libname = libNameInput.getSelectedItem().toString();
         ArrayList<Copy> a= null;
         try {
-            a = Settings.getInstance().database.getAvailableCopies(Integer.valueOf(BooksInfo.getValueAt(BooksInfo.getSelectedRow(),6).toString()));
+            a = Settings.getInstance().mockDatabase.getAvailableCopies(Integer.valueOf(BooksInfo.getValueAt(BooksInfo.getSelectedRow(),6).toString()));
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
@@ -224,7 +224,7 @@ public class BrowseBookPanel3  extends BasePanel {
         {
             if (a.get(i).getLibraryName().equals(libname))
             {
-                Settings.getInstance().database.orderBook(user,a.get(i).getCopyID());
+                Settings.getInstance().mockDatabase.orderBook(user,a.get(i).getCopyID());
                 statusInfo.setText("you successful reserv "+BooksInfo.getValueAt(BooksInfo.getSelectedRow(),0));
                 return;
             }

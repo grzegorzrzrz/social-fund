@@ -1,16 +1,13 @@
 package app;
 
 import classes.Application;
-import classes.Book;
-import classes.Library;
+import classes.Form;
 import classes.User;
 import lib.Settings;
 import panels.*;
 
 import javax.swing.*;
 import java.sql.Date;
-import java.util.Scanner;
-import java.util.Set;
 
 
 public class App {
@@ -69,8 +66,7 @@ public class App {
         chooseform chose =new chooseform();
         chose.getCancelButton().addActionListener(e -> disposeSubPanel(chose));
         chose.getAcceptButton().addActionListener(e -> {
-            Application application= new Application(5,"denied",new Date(2023,11,8));
-            application.form.formTypeID=(Integer.parseInt(chose.getForm_id().getText()));
+            Application application= new Application("denied",new Date(2023,11,8), new Form());
             chose.dispose();
             fillAplication fill =new fillAplication(application);
             fill.getCancelButton().addActionListener(m ->disposeSubPanel(fill));
@@ -93,7 +89,7 @@ public class App {
         Showapplications.getCancelButton().addActionListener(
                 e ->{ disposeSubPanel(Showapplications);});
         Showapplications.getAcceptButton().addActionListener(e->{
-            Application application= new Application(5,"denied",new Date(2023,11,8));//getmockdatebase
+            Application application= new Application("denied",new Date(2023,11,8), new Form());//getmockdatebase
             Showapplications.dispose();
             show prewiev= new show(application);//Settings.getInstance().database.getAplication(aplication id)
             prewiev.getCancelButton().addActionListener(
@@ -104,11 +100,11 @@ public class App {
 
     }
     private void DeactivateForm() {
-        DeactivateFormPanel deactivateFormPanel = new DeactivateFormPanel((Settings.getInstance().database.getFormNames()).toArray(new String[0]));
+        DeactivateFormPanel deactivateFormPanel = new DeactivateFormPanel((Settings.getInstance().mockDatabase.getFormNames()).toArray(new String[0]));
         deactivateFormPanel.getCancelButton().addActionListener(e -> disposeSubPanel(deactivateFormPanel));
         deactivateFormPanel.getAcceptButton().addActionListener(e ->{
             String formName = (String)deactivateFormPanel.getChooseForm().getSelectedItem();
-            String message = Settings.getInstance().database.disableForm(formName);
+            String message = Settings.getInstance().mockDatabase.disableForm(formName);
             handleMessagePanel(deactivateFormPanel, message);
         });
     }
@@ -117,18 +113,22 @@ public class App {
         AddFormPanel addFormPanel = new AddFormPanel();
         addFormPanel.getCancelButton().addActionListener(e-> disposeSubPanel(addFormPanel));
         addFormPanel.getAcceptButton().addActionListener(e ->{
-            String message = Settings.getInstance().database.CreateNewForm(addFormPanel.getFormName().getText(), addFormPanel.getFormTableModel().getDataVector());
-            handleMessagePanel(addFormPanel, message);
+            //String message = Settings.getInstance().database.CreateNewForm(addFormPanel.getFormName().getText(), addFormPanel.getFormTableModel().getDataVector());
+            //handleMessagePanel(addFormPanel, message);
         });
     }
 
     private void GenerateAnalyticReport() {
-       // GenerateReportPanel generateReportPanel = new GenerateReportPanel();
+        GenerateReportPanel generateReportPanel = new GenerateReportPanel();
+
+        generateReportPanel.getCancelButton().addActionListener(e -> disposeSubPanel(generateReportPanel));
+        generateReportPanel.getAcceptButton().addActionListener(e -> {
+            //String message = Settings.getInstance().database.generateReport(generateReportPanel.getStartDate().getText(), generateReportPanel.getEndDate().getText());
+            //handleMessagePanel(generateReportPanel, message);
+        });
+
 
     }
-
-
-
 
     private void Register(){
         RegisterUserPanel registerPanel = new RegisterUserPanel();
@@ -137,7 +137,7 @@ public class App {
             User newUser = new User(registerPanel.getPersonsName().getText(), registerPanel.getSurname().getText(),
                     registerPanel.getLogin().getText(), registerPanel.getPassword().getText());
             try {
-                Settings.getInstance().database.registerUser(newUser);
+                Settings.getInstance().mockDatabase.registerUser(newUser);
             }
             catch (RuntimeException exc)
             {
@@ -156,7 +156,7 @@ public class App {
         if (permissionLevel == 0) {
             LoginPanel loginPanel = new LoginPanel();
             loginPanel.getAcceptButton().addActionListener(e -> {
-                int [] data = Settings.getInstance().database.validateLoginData(loginPanel.getUsername().getText(), loginPanel.getPassword().getPassword());
+                int [] data = Settings.getInstance().mockDatabase.validateLoginData(loginPanel.getUsername().getText(), loginPanel.getPassword().getPassword());
                 switch (data[0])
                 {
                     case 0 -> {// show window couldn't log in
@@ -226,7 +226,7 @@ public class App {
         catch (Exception e){
             // will use the default "Metal" Look and Feel instead
         }
-        Settings.getInstance().database = new MockDatabase();
+        Settings.getInstance().mockDatabase = new MockDatabase();
         new App();
     }
     private void handleMessagePanel(JFrame callingPanel, String textToShow)
