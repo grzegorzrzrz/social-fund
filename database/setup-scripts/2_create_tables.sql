@@ -98,7 +98,8 @@ ALTER TABLE rozpatrujacy ADD CONSTRAINT rozpatrujacy_pk PRIMARY KEY ( id_uzytkow
 
 CREATE TABLE typ_formularzu (
     nazwa_formularzu VARCHAR2(40) NOT NULL,
-    "id_formularzu"  NUMBER NOT NULL
+    "id_formularzu"  NUMBER NOT NULL,
+    czy_aktywny NUMBER(1) DEFAULT 1 NOT NULL
 )
 LOGGING;
 
