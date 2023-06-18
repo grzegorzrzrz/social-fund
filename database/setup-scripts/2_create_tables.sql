@@ -67,7 +67,7 @@ CREATE TABLE pola_formularzu (
     id_pola                        NUMBER NOT NULL,
     nazwa_pola                     VARCHAR2(20) NOT NULL,
     typ_pol_formularzu_id_typu     NUMBER NOT NULL,
-    "typ_formularzu_id_formularzu" NUMBER NOT NULL
+    typ_formularzu_id_formularzu NUMBER NOT NULL
 )
 LOGGING;
 
@@ -77,14 +77,14 @@ ALTER TABLE pola_formularzu ADD CONSTRAINT pola_formularzu_pk PRIMARY KEY ( id_p
 CREATE TABLE polaczenie_pomiedzy_formularzami_a_typem_srodkow (
 --  ERROR: Column name length exceeds maximum allowed length(30)
     typ_srodkow_encja_slownikowa_nazwa_funduszu VARCHAR2(30) NOT NULL,
-    "typ_formularzu_id_formularzu"              NUMBER NOT NULL
+    typ_formularzu_id_formularzu             NUMBER NOT NULL
 )
 LOGGING;
 
 --  ERROR: PK name length exceeds maximum allowed length(30)
 ALTER TABLE polaczenie_pomiedzy_formularzami_a_typem_srodkow ADD CONSTRAINT polaczenie_pomiedzy_formularzami_a_typem_srodkow_pk PRIMARY
 KEY ( typ_srodkow_encja_slownikowa_nazwa_funduszu,
-                                                                                                                                "typ_formularzu_id_formularzu"
+                                             typ_formularzu_id_formularzu
                                                                                                                                 );
 
 CREATE TABLE rozpatrujacy (
@@ -98,12 +98,12 @@ ALTER TABLE rozpatrujacy ADD CONSTRAINT rozpatrujacy_pk PRIMARY KEY ( id_uzytkow
 
 CREATE TABLE typ_formularzu (
     nazwa_formularzu VARCHAR2(40) NOT NULL,
-    "id_formularzu"  NUMBER NOT NULL,
+    id_formularzu NUMBER NOT NULL,
     czy_aktywny NUMBER(1) DEFAULT 1 NOT NULL
 )
 LOGGING;
 
-ALTER TABLE typ_formularzu ADD CONSTRAINT typ_formularzu_pk PRIMARY KEY ( "id_formularzu" );
+ALTER TABLE typ_formularzu ADD CONSTRAINT typ_formularzu_pk PRIMARY KEY ( id_formularzu );
 
 CREATE TABLE typ_pol_formularzu (
     id_typu            NUMBER NOT NULL,
@@ -200,8 +200,8 @@ ALTER TABLE oswiadczenie_zarobkowe
 
 --  ERROR: FK name length exceeds maximum allowed length(30)
 ALTER TABLE pola_formularzu
-    ADD CONSTRAINT pola_formularzu_typ_formularzu_fk FOREIGN KEY ( "typ_formularzu_id_formularzu" )
-        REFERENCES typ_formularzu ( "id_formularzu" )
+    ADD CONSTRAINT pola_formularzu_typ_formularzu_fk FOREIGN KEY ( typ_formularzu_id_formularzu )
+        REFERENCES typ_formularzu ( id_formularzu )
     NOT DEFERRABLE;
 
 --  ERROR: FK name length exceeds maximum allowed length(30)
@@ -212,8 +212,8 @@ ALTER TABLE pola_formularzu
 
 --  ERROR: FK name length exceeds maximum allowed length(30)
 ALTER TABLE polaczenie_pomiedzy_formularzami_a_typem_srodkow
-    ADD CONSTRAINT polaczenie_pomiedzy_formularzami_a_typem_srodkow_typ_formularzu_fk FOREIGN KEY ( "typ_formularzu_id_formularzu" )
-        REFERENCES typ_formularzu ( "id_formularzu" )
+    ADD CONSTRAINT polaczenie_pomiedzy_formularzami_a_typem_srodkow_typ_formularzu_fk FOREIGN KEY ( typ_formularzu_id_formularzu )
+        REFERENCES typ_formularzu ( id_formularzu )
     NOT DEFERRABLE;
 
 --  ERROR: FK name length exceeds maximum allowed length(30)
