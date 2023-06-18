@@ -1,8 +1,6 @@
 package panels;
 
 import classes.Application;
-import classes.Book;
-import classes.Library;
 import lib.BasePanel;
 import lib.Settings;
 
@@ -10,8 +8,6 @@ import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 import java.util.ArrayList;
-
-import static javax.swing.JSplitPane.HORIZONTAL_SPLIT;
 
 public class ShowApplications extends BasePanel {
     private JComboBox<String> chooseLibrary;
@@ -57,12 +53,12 @@ public class ShowApplications extends BasePanel {
 
 
 
-        ArrayList<Application> a= Settings.getInstance().database.getAplications(user);
+        ArrayList<Application> a= Settings.getInstance().mockDatabase.getAplications(user);
 
         for (int i=0;i<a.size();i++)
         {
 
-            ShowApplicationsModel.addRow(new Object[] {a.get(i).applicationID,a.get(i).status, a.get(i).creationDate
+            ShowApplicationsModel.addRow(new Object[] {a.get(i).status, a.get(i).creationDate
             });
         }
 

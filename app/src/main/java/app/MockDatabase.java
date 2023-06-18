@@ -95,13 +95,13 @@ public class MockDatabase {
         return "Successfully removed the form";
     }
 
-    public String CreateNewForm(String formName, Vector<Vector> dataVector) {
+    public String CreateNewForm(Form form) {
         return "Successfully added a new form";
     }
 
     public ArrayList<Application> getAplications(String user) {
         ArrayList<Application> odp= new ArrayList<Application>();
-        Application application= new Application(5,"denied",new Date(123,11,8));
+        Application application= new Application("denied",new Date(123,11,8), new Form());
         odp.add(application);
         return odp;
     }

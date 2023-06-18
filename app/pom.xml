@@ -78,7 +78,16 @@
              <version>5.9.2</version>
              <scope>test</scope>
          </dependency>
-
+     <dependency>
+         <groupId>net.sourceforge.jdatepicker</groupId>
+         <artifactId>jdatepicker</artifactId>
+         <version>1.3.2</version>
+     </dependency>
+     <dependency>
+         <groupId>io.github.kolod</groupId>
+         <artifactId>flatlaf-themes-combobox-model</artifactId>
+         <version>1.1.1</version>
+     </dependency>
 
  </dependencies>
 

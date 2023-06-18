@@ -1,7 +1,6 @@
 package panels;
 
 
-import app.Database;
 import classes.Book;
 
 import lib.BasePanel;
@@ -24,7 +23,7 @@ public class AddingCopy extends BasePanel {
      */
     public AddingCopy() {
 
-        chooseLibrary = new JComboBox<>(Settings.getInstance().database.getLibrariesNames());
+        chooseLibrary = new JComboBox<>(Settings.getInstance().mockDatabase.getLibrariesNames());
         JSplitPane upperSplitPane5 = new JSplitPane();
         upperSplitPane5.setResizeWeight(0.5);
         upperSplitPane5.setOrientation(HORIZONTAL_SPLIT);
@@ -32,7 +31,7 @@ public class AddingCopy extends BasePanel {
 
         upperSplitPane5.setEnabled(false);
 
-        a=Settings.getInstance().database.getBooks("","","","");
+        a=Settings.getInstance().mockDatabase.getBooks("","","","");
         ArrayList<String> b=new ArrayList<String>();
         for (int i=0;i<a.size();i++)
         {
@@ -64,7 +63,7 @@ public class AddingCopy extends BasePanel {
      * @return Selected library id
      * */
     public int ReturnSelectedLibraryId() {
-        return  Settings.getInstance().database.getLibraryInfo(chooseLibrary.getSelectedItem().toString()).getLibraryID();
+        return  Settings.getInstance().mockDatabase.getLibraryInfo(chooseLibrary.getSelectedItem().toString()).getLibraryID();
            }
 }
 
