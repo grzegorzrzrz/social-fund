@@ -453,32 +453,29 @@ public class Database {
      * @param password user password
      * @return user with given login and password
      */
-    private int GetUser(String login, String password) {
-        String sql = "SELECT * FROM uzytkownicy WHERE login = '" + login + "' AND haslo = '" + password + "'";
+    public void GetUser(User user) {
+        String sql = "SELECT * FROM uzytkownicy WHERE login = '" + user.getLogin() + "' AND haslo = '" + user.getPassword() + "'";
         try {
             ResultSet rs = Select(sql);
-            rs.next();
-            int userID = rs.getInt(1);
-            rs.close();
+            if(rs.next()) {
+                user.setUserID(rs.getInt(1));
+                rs.close();
+                user.setPermissionLevel(1);
 
-            Boolean isAdmin = false; //TODO: check if user is admin and redo to User class
-
-            // Check for admin
-            String sqlCheckAdmin = "SELECT * FROM rozpatrujacy WHERE id_uzytkownika = '" + userID + "'";
-            try {
-                ResultSet rsCheckAdmin = Select(sqlCheckAdmin);
-                rsCheckAdmin.next();
-                if (rsCheckAdmin.getInt(1) == userID) {
-                    isAdmin = true;
+                // Check for admin
+                String sqlCheckAdmin = "SELECT * FROM rozpatrujacy WHERE id_uzytkownika = '" + user.getUserID() + "'";
+                try {
+                    ResultSet rsCheckAdmin = Select(sqlCheckAdmin);
+                    if (rsCheckAdmin.next()) {
+                        user.setPermissionLevel(2);
+                    }
+                    rsCheckAdmin.close();
+                } catch (SQLException e) {
+                    throw new RuntimeException(e);
                 }
-                rsCheckAdmin.close();
-            } catch (SQLException e) {
-                throw new RuntimeException(e);
             }
-
             stmt.close();
             con.close();
-            return userID;
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }

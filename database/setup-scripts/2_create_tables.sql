@@ -134,7 +134,7 @@ ALTER TABLE uzytkownicy ADD CONSTRAINT uzytkownicy_pk PRIMARY KEY ( id_uzytkowni
 ALTER TABLE uzytkownicy ADD CONSTRAINT unikalny_login UNIQUE (login);
 CREATE TABLE wniosek (
 --  ERROR: Column name length exceeds maximum allowed length(30)
-    typ_srodkow_encja_slownikowa_nazwa_funduszu VARCHAR2(50) NOT NULL,
+    typ_formularzu_id_formularzu NUMBER NOT NULL,
     id_wniosku                                  NUMBER NOT NULL,
     status                                      VARCHAR2(15) NOT NULL,
     data_zlozenia                               DATE NOT NULL,
@@ -235,8 +235,8 @@ ALTER TABLE wniosek
 
 --  ERROR: FK name length exceeds maximum allowed length(30)
 ALTER TABLE wniosek
-    ADD CONSTRAINT wniosek_typ_srodkow_encja_slownikowa_fk FOREIGN KEY ( typ_srodkow_encja_slownikowa_nazwa_funduszu )
-        REFERENCES typ_srodkow_encja_slownikowa ( nazwa_funduszu )
+    ADD CONSTRAINT wniosek_typ_formularzu_fk FOREIGN KEY ( typ_formularzu_id_formularzu )
+        REFERENCES typ_formularzu ( id_formularzu )
     NOT DEFERRABLE;
 
 ALTER TABLE wniosek
