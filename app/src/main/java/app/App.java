@@ -12,7 +12,6 @@ import java.io.PrintWriter;
 import java.sql.Date;
 import java.util.ArrayList;
 
-import java.sql.Date;
 import java.util.Vector;
 
 public class App {
@@ -90,7 +89,6 @@ public class App {
     private void DoProcessAnApplication(Integer chosenID) {
         Application temp = new Application();
         ProcessAnApplication processAnApplication = new ProcessAnApplication(temp);
-        int a = 5;
 
         processAnApplication.getCancelButton().addActionListener(e -> {
             processAnApplication.dispose();
@@ -189,18 +187,36 @@ public class App {
 
     private void Register(){
         RegisterUserPanel registerPanel = new RegisterUserPanel();
-        registerPanel.getCancelButton().addActionListener(e -> disposeSubPanel(registerPanel));
+        registerPanel.getCancelButton().addActionListener(e -> {
+            registerPanel.dispose();
+            Login();
+        });
+
         registerPanel.getAcceptButton().addActionListener(e -> {
-            User newUser = new User(registerPanel.getPersonsName().getText(), registerPanel.getSurname().getText(),
-                    registerPanel.getLogin().getText(), registerPanel.getPassword().getText(), 1, 0);
+
             try {
-                Settings.getInstance().mockDatabase.registerUser(newUser);
+                String tempDate = registerPanel.getBirthDate().getText();
+                String[] splitDate = tempDate.split("-");
+
+                Date birthDate = new Date(Integer.parseInt(splitDate[0]),
+                        Integer.parseInt(splitDate[1]),
+                        Integer.parseInt(splitDate[2]));
+
+                Settings.getInstance().database.AddNewUser(registerPanel.getLogin().getText(),
+                        registerPanel.getPassword().getText(), registerPanel.getPersonsName().getText(),
+                        registerPanel.getSurname().getText(), registerPanel.getCompany().getText(),
+                        registerPanel.getPesel().getText(), birthDate,
+                        registerPanel.getAccountNumber().getText());
             }
             catch (RuntimeException exc)
             {
                 handleMessagePanel(registerPanel, "Could not create a new user account!");
             }
-            disposeSubPanel(registerPanel);
+            catch (NumberFormatException ex){
+                handleMessagePanel(registerPanel, "ERROR, incorrect data in Birth Date field");
+            }
+            registerPanel.dispose();
+            Login();
         });
     }
 
@@ -227,6 +243,10 @@ public class App {
                     disposeSubPanel(loginPanel);
             });
             loginPanel.getCancelButton().addActionListener(e -> disposeSubPanel(loginPanel));
+            loginPanel.getRegisterButton().addActionListener( e-> {
+                loginPanel.dispose();
+                Register();
+            });
         }
         else {
             user.setPermissionLevel(0);

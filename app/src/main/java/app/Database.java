@@ -505,7 +505,7 @@ public class Database {
      * @param birthDate user birthdate
      * @param accountNumber user account number
      */
-    private void AddNewUser(String login, String password, String name, String surname, String company, String pesel,
+    public void AddNewUser(String login, String password, String name, String surname, String company, String pesel,
                             String birthDate, String accountNumber) {
         String procedure = "call DodajWnioskodawce('" + login + "', '" + password + "', '" + name + "', '" + surname + "', '" +
                 company + "', '" + pesel + "', '" + birthDate + "', '" + accountNumber + "')";
