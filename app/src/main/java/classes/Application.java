@@ -8,7 +8,7 @@ import java.sql.Date;
 
 @AllArgsConstructor(access= AccessLevel.PUBLIC)
 @Getter
-public class Application {
+public class Application{
     public Application()
     {
         status="denied";

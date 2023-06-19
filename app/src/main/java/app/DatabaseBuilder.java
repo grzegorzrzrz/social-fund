@@ -1,7 +1,8 @@
 package app;
 
 public class DatabaseBuilder {
-    private String DBURL = "localhost:1521";
+    //connect to enterprise:21.3
+    private String DBURL = "jdbc:oracle:thin:@localhost:1521/ORCLCDB";
     private String DBUSERNAME = "c##develop";
     private String DBPASSWORD =  "oracle";
 

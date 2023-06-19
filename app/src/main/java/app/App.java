@@ -7,6 +7,9 @@ import lib.Settings;
 import panels.*;
 
 import javax.swing.*;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.PrintWriter;
 import java.sql.Date;
 
 
@@ -119,12 +122,22 @@ public class App {
     }
 
     private void GenerateAnalyticReport() {
-        GenerateReportPanel generateReportPanel = new GenerateReportPanel();
+        GenerateReportPanel generateReportPanel = new GenerateReportPanel(Settings.getInstance().database.GetFormTypes());
 
         generateReportPanel.getCancelButton().addActionListener(e -> disposeSubPanel(generateReportPanel));
         generateReportPanel.getAcceptButton().addActionListener(e -> {
-            //String message = Settings.getInstance().database.generateReport(generateReportPanel.getStartDate().getText(), generateReportPanel.getEndDate().getText());
-            //handleMessagePanel(generateReportPanel, message);
+            StringBuilder message = Settings.getInstance().database.GenerateReport(generateReportPanel.GetStartingDate(), generateReportPanel.GetEndingDate(),
+                    generateReportPanel.statusDropdown.getSelectedItem().toString(), generateReportPanel.formTypeDropdown.getSelectedItem().toString());
+            // save to csv
+            PrintWriter pw = null;
+            try {
+                pw = new PrintWriter(new File("export.csv"));
+                pw.write(message.toString());
+                pw.close();
+            } catch (FileNotFoundException fileNotFoundException) {
+                fileNotFoundException.printStackTrace();
+            }
+            handleMessagePanel(generateReportPanel, "Saved to: export.csv");
         });
 
 
@@ -227,6 +240,7 @@ public class App {
             // will use the default "Metal" Look and Feel instead
         }
         Settings.getInstance().mockDatabase = new MockDatabase();
+        Settings.getInstance().database = new DatabaseBuilder().build();
         new App();
     }
     private void handleMessagePanel(JFrame callingPanel, String textToShow)

@@ -1,3 +1,4 @@
+connect c##develop/oracle
 
 CREATE SEQUENCE seq_uzytkownik START WITH 1 INCREMENT BY 1;
 --/

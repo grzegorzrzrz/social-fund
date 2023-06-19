@@ -139,9 +139,9 @@ public class Database {
      * @return applications with given id
      */
     public ArrayList<Application> GetApplicationInfo(Date startDate, Date endDate, String status) {
-        String sql = "SELECT * FROM WNIOSEK WHERE  data_zlozenia >= '" +
-                startDate + "' AND data_zlozenia <= '" + endDate + "'";
-        if (status != null) {
+        String sql = "SELECT * FROM WNIOSEK WHERE  data_zlozenia >= TO_DATE('" +
+                startDate + "','YYYY-MM-DD') AND data_zlozenia <= TO_DATE('" + endDate + "','YYYY-MM-DD')";
+        if (!status.equals("Any")) {
             sql += " AND status = '" + status + "'";
         }
         return GetApplicationInfo(sql);
@@ -151,17 +151,42 @@ public class Database {
      * @param startDate start date of application
      * @param endDate end date of application
      * @param status status of application
-     * @return application with given id
+     * @param formName fund of application
+     * @return report with all valid applications
      */
-    public String GenerateReport(Date startDate, Date endDate, String status) {
+    public StringBuilder GenerateReport(Date startDate, Date endDate, String status, String formName) {
         ArrayList<Application> applications = GetApplicationInfo(startDate, endDate, status);
-        String report = "";
+        StringBuilder report = new StringBuilder();
+        report.append("Status,Data złożenia,Typ wniosku,Typ funduszu,Pola\n");
         for (Application application : applications) {
-            report += application.toString() + "\n";
+            if(formName.equals("All") || application.getForm().getName().equals(formName)) {
+                report.append(application.getStatus());
+                report.append(",");
+                report.append(application.getCreationDate());
+                report.append(",");
+                report.append(application.getForm().getName());
+                report.append(",");
+                report.append(application.getForm().getFundName());
+                report.append(",{");
+                for (FormField field : application.getForm().getFields()) {
+                    report.append(field.getName());
+                    report.append(",");
+                    report.append(field.getValue());
+                    report.append(",");
+                    report.append(field.getMaximumLength());
+                    report.append(",");
+                    report.append(field.getType());
+                }
+                report.append("}\n");
+            }
         }
         return report;
     }
 
+    /**
+     * @param sql sql query
+     * @return ArrayList<Application> list of applications
+     */
     private ArrayList<Application> GetApplicationInfo(String sql) {
         try {
             ResultSet rs = Select(sql);
@@ -204,7 +229,7 @@ public class Database {
         String[] fieldsArray = encodedFields.split(";");
         int formTypeID = Integer.parseInt(fieldsArray[0]);
         String formName = GetFormName(formTypeID);
-        String fundName = fieldsArray[1];
+        String fundName = "";//fieldsArray[1]; //todo remove
 
         for (int i = 2; i < fieldsArray.length; i++) {
             String[] fieldParts = fieldsArray[i].split(":");
@@ -217,6 +242,23 @@ public class Database {
             fields.add(formField);
         }
         return new Form(formName, fundName, fields);
+    }
+
+    public String[] GetFormTypes() {
+        String sql = "SELECT nazwa_formularzu FROM typ_formularzu";
+        try {
+            ResultSet rs = Select(sql);
+            ArrayList<String> formTypes = new ArrayList<>();
+            while (rs.next()) {
+                formTypes.add(rs.getString(1));
+            }
+            rs.close();
+            stmt.close();
+            con.close();
+            return formTypes.toArray(new String[0]);
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     /**
@@ -269,9 +311,19 @@ public class Database {
     }
 
     /**
-     * @param form form to be added to database
+     * @param form form template to be added to database
      */
-    public void AddForm(Form form) {//TODO: add fund name
+    public void AddForm(Form form) {
+        String fieldNames = "";
+        String fieldTypes = "";
+        String fieldMaxLengths = "";
+        for (FormField field : form.getFields()) {
+            fieldNames += field.getName() + ",";
+            fieldTypes += field.getType() + ",";
+            fieldMaxLengths += field.getMaximumLength() + ",";
+        }
+        String sql = "call DodajFormularz(" + form.getName() + ", '" + form.getFundName() + "', '" + fieldNames + "', '" + fieldTypes + "', '" + fieldMaxLengths + "')";
+        Procedure(sql);
     }
 
     /**
@@ -347,7 +399,7 @@ public class Database {
      * @throws SQLException wrong sql query
      */
     private String GetFormName(int formTypeID) throws SQLException {
-        String sql = "SELECT name FROM FormTypes WHERE formTypeID = " + formTypeID;
+        String sql = "SELECT nazwa_formularzu FROM typ_formularzu WHERE id_formularzu = " + formTypeID;
         ResultSet rs = Select(sql);
         rs.next();
         return rs.getString(1);

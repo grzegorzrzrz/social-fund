@@ -167,6 +167,7 @@ EXCEPTION
     DBMS_OUTPUT.PUT_LINE('Wystapil blad podczas dezaktywowania formularzu: ' || SQLERRM);
 END;
 /
+connect c##develop/oracle
 
 --/
 CREATE OR REPLACE PROCEDURE DodajFormularz (

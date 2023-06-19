@@ -10,7 +10,7 @@ import java.util.Vector;
 
 public class MockDatabase {
     public int[] validateLoginData(String username, char[] password) {
-        return new int[] {1,1};
+        return new int[] {2,1};
 //        return new int[]{permission, userID};
     }
 

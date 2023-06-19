@@ -1,3 +1,4 @@
+connect c##develop/oracle
 --/
 CREATE OR REPLACE TRIGGER Trigger_ZmianaStatusuWniosku
 AFTER UPDATE ON Wniosek
@@ -16,10 +17,10 @@ BEGIN
   );
 
   COMMIT;
-  DBMS_OUTPUT.PUT_LINE('Rekord zosta³ dodany do historii zmian statusu wniosku.');
+  DBMS_OUTPUT.PUT_LINE('Rekord zostaï¿½ dodany do historii zmian statusu wniosku.');
 EXCEPTION
   WHEN OTHERS THEN
     ROLLBACK;
-    DBMS_OUTPUT.PUT_LINE('Wyst¹pi³ b³¹d podczas dodawania rekordu do historii zmian statusu wniosku: ' || SQLERRM);
+    DBMS_OUTPUT.PUT_LINE('Wystï¿½piï¿½ bï¿½ï¿½d podczas dodawania rekordu do historii zmian statusu wniosku: ' || SQLERRM);
 END;
 /

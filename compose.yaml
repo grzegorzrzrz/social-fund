@@ -17,6 +17,10 @@ services:
       - '1521:1521'
     expose:
       - 1521
+    deploy:
+      resources:
+        limits:
+          cpus: "2.0"
     # volumes:
     #   - ./database/create_database.ddl:/docker-entrypoint-initdb.d/create_tables.sql
     #   - ./database/insert_example_data.sql:/docker-entrypoint-initdb.d/insert_data.sql

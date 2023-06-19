@@ -6,7 +6,7 @@ import lombok.Getter;
 
 @AllArgsConstructor(access= AccessLevel.PUBLIC)
 @Getter
-public class FormField {
+public class FormField{
     public FormField()
     {
         name="ala";
