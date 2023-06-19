@@ -229,7 +229,7 @@ public class Database {
         String[] fieldsArray = encodedFields.split(";");
         int formTypeID = Integer.parseInt(fieldsArray[0]);
         String formName = GetFormName(formTypeID);
-        String fundName = "";//fieldsArray[1]; //todo remove
+        String fundName = fieldsArray[1];
 
         for (int i = 2; i < fieldsArray.length; i++) {
             String[] fieldParts = fieldsArray[i].split(":");
