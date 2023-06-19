@@ -3,7 +3,7 @@ connect c##develop/oracle
 CREATE SEQUENCE adres_korespondencji_adres_kor START WITH 1 NOCACHE ORDER;
 
 CREATE TABLE adres_korespondencji (
-    id_adress               NUMBER NOT NULL,
+    id_adres               NUMBER NOT NULL,
     ulica                   VARCHAR2(20) NOT NULL,
     numer_domu              NUMBER NOT NULL,
     numer_mieszkania        NUMBER,
@@ -16,7 +16,7 @@ ALTER TABLE adres_korespondencji ADD CONSTRAINT adres_korespondencji_pk PRIMARY 
 
 
 --  ERROR: UK name length exceeds maximum allowed length(30)
-ALTER TABLE adres_korespondencji ADD CONSTRAINT adres_korespondencji_id_adress_un UNIQUE ( id_adress );
+ALTER TABLE adres_korespondencji ADD CONSTRAINT adres_korespondencji_id_adress_un UNIQUE ( id_adres );
 
 CREATE TABLE czlonkowie_rodziny (
     id_czlonkowie_rodziny       NUMBER NOT NULL,
@@ -43,7 +43,7 @@ ALTER TABLE historia_statusow_wnioskow ADD CONSTRAINT historia_statusow_wnioskow
 
 CREATE TABLE opis_funduszu (
 --  ERROR: Column name length exceeds maximum allowed length(30)
-    typ_srodkow_encja_slownikowa_nazwa_funduszu VARCHAR2(30) NOT NULL,
+    typ_srodkow_encja_slownikowa_nazwa_funduszu VARCHAR2(50) NOT NULL,
     rok                                         NUMBER NOT NULL,
     kwota_przyznana                             NUMBER NOT NULL,
     kwota_uzyta                                 NUMBER NOT NULL,
@@ -76,7 +76,7 @@ ALTER TABLE pola_formularzu ADD CONSTRAINT pola_formularzu_pk PRIMARY KEY ( id_p
 --  ERROR: Table name length exceeds maximum allowed length(30)
 CREATE TABLE polaczenie_pomiedzy_formularzami_a_typem_srodkow (
 --  ERROR: Column name length exceeds maximum allowed length(30)
-    typ_srodkow_encja_slownikowa_nazwa_funduszu VARCHAR2(30) NOT NULL,
+    typ_srodkow_encja_slownikowa_nazwa_funduszu VARCHAR2(50) NOT NULL,
     typ_formularzu_id_formularzu             NUMBER NOT NULL
 )
 LOGGING;
@@ -90,7 +90,7 @@ KEY ( typ_srodkow_encja_slownikowa_nazwa_funduszu,
 CREATE TABLE rozpatrujacy (
     id_uzytkownika   NUMBER NOT NULL,
     pozycja_w_firmie VARCHAR2(20) NOT NULL,
-    dzial_firmy      VARCHAR2(20) NOT NULL
+    dzial_firmy      VARCHAR2(30) NOT NULL
 )
 LOGGING;
 
@@ -115,7 +115,7 @@ LOGGING;
 ALTER TABLE typ_pol_formularzu ADD CONSTRAINT typ_pol_formularzu_pk PRIMARY KEY ( id_typu );
 
 CREATE TABLE typ_srodkow_encja_slownikowa (
-    nazwa_funduszu VARCHAR2(30) NOT NULL
+    nazwa_funduszu VARCHAR2(50) NOT NULL
 )
 LOGGING;
 
@@ -134,7 +134,7 @@ ALTER TABLE uzytkownicy ADD CONSTRAINT uzytkownicy_pk PRIMARY KEY ( id_uzytkowni
 ALTER TABLE uzytkownicy ADD CONSTRAINT unikalny_login UNIQUE (login);
 CREATE TABLE wniosek (
 --  ERROR: Column name length exceeds maximum allowed length(30)
-    typ_srodkow_encja_slownikowa_nazwa_funduszu VARCHAR2(30) NOT NULL,
+    typ_srodkow_encja_slownikowa_nazwa_funduszu VARCHAR2(50) NOT NULL,
     id_wniosku                                  NUMBER NOT NULL,
     status                                      VARCHAR2(15) NOT NULL,
     data_zlozenia                               DATE NOT NULL,
