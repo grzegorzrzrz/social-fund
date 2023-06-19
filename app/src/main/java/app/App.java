@@ -2,8 +2,10 @@ package app;
 
 import classes.Application;
 import classes.Form;
+import classes.FormField;
 import classes.User;
 import lib.Settings;
+import org.apache.commons.lang3.tuple.Pair;
 import panels.*;
 
 import javax.swing.*;
@@ -11,7 +13,10 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.PrintWriter;
 import java.sql.Date;
+import java.util.ArrayList;
 
+import java.sql.Date;
+import java.util.Vector;
 
 public class App {
     // permission level 0 - not logged in
@@ -49,6 +54,10 @@ public class App {
             case 2 -> { // logged as an admin
                 AdminPanel adminPanel = new AdminPanel(permissionLevel, username);
                 adminPanel.login.setText("Logout");
+                adminPanel.chooseApplicationToView.addActionListener(e ->{
+                    ChooseAnApplicationToView();
+                    adminPanel.dispose();
+                });
                 adminPanel.getAddForm().addActionListener(e -> {
                     AddForm();
                     adminPanel.dispose();
@@ -63,6 +72,31 @@ public class App {
                 });
             }
         }
+    }
+
+    private void ChooseAnApplicationToView() {
+        Vector<Pair<Integer, Date>> temp = new Vector<Pair<Integer, Date>>();
+        //Pair<Integer, Date> aha = Pair.of(1, new Date(10000));
+        temp.add(Pair.of(1, new Date(10000)));
+        temp.add(Pair.of(2, new Date(1000000000)));
+        ChooseApplicationToView chooseApplicationToView = new ChooseApplicationToView(temp);
+        chooseApplicationToView.getCancelButton().addActionListener(e -> disposeSubPanel(chooseApplicationToView));
+        chooseApplicationToView.getAcceptButton().addActionListener(e ->{
+        Integer chosenID = (Integer) chooseApplicationToView.getApplicationsBox().getSelectedItem();
+        chooseApplicationToView.dispose();
+        DoProcessAnApplication(chosenID);
+        });
+    }
+
+    private void DoProcessAnApplication(Integer chosenID) {
+        Application temp = new Application();
+        ProcessAnApplication processAnApplication = new ProcessAnApplication(temp);
+        processAnApplication.getCancelButton().addActionListener(e -> {
+            processAnApplication.dispose();
+            ChooseAnApplicationToView();
+        });
+        processAnApplication.getAcceptButton().addActionListener(e ->{
+        });
     }
 
     private void addApplication() {
@@ -116,6 +150,14 @@ public class App {
         AddFormPanel addFormPanel = new AddFormPanel();
         addFormPanel.getCancelButton().addActionListener(e-> disposeSubPanel(addFormPanel));
         addFormPanel.getAcceptButton().addActionListener(e ->{
+            ArrayList<FormField> fields = new ArrayList<>();
+
+            for (var vector:
+                    addFormPanel.getFormTableModel().getDataVector()) {
+                fields.add(new FormField(vector));
+            }
+
+            Form newForm = new Form(addFormPanel.getFormName().getText(), addFormPanel.getFundName().getText(), fields);
             //String message = Settings.getInstance().database.CreateNewForm(addFormPanel.getFormName().getText(), addFormPanel.getFormTableModel().getDataVector());
             //handleMessagePanel(addFormPanel, message);
         });
