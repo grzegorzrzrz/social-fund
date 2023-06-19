@@ -22,11 +22,9 @@ BEGIN
   RETURNING id_uzytkownika INTO v_id_uzytkownika;
   INSERT INTO Rozpatrujacy (id_uzytkownika, pozycja_w_firmie, dzial_firmy)
   VALUES (v_id_uzytkownika, 'Asystent', 'Kadry i place');
-END;
-/
+
 -- Dodanie uzytkownikow wnioskodawcow
---/
-BEGIN
+
   DodajWnioskodawce(
 p_login => 'marekm',
 p_haslo => 'pog',
@@ -66,105 +64,20 @@ p_pozycja => 'Dyrektor',
 p_pesel => '11122233344',
 p_data_urodzenia => TO_DATE('1976-03-14', 'YYYY-MM-DD')
 );
+COMMIT;
 END;
 /
-
--- Dodanie typow srodkow
+--Dodanie oswiadczen zarobkowych
 --/
 BEGIN
-  INSERT INTO TYP_SRODKOW_ENCJA_SLOWNIKOWA (NAZWA_FUNDUSZU)
-  VALUES ('Wypoczynek wakacyjny');
+INSERT INTO oswiadczenie_zarobkowe (dochod_na_czlonka_rodziny, data, wnioskodawcy_id_uzytkownika)
+VALUES (5000, TO_DATE('2023-06-19', 'YYYY-MM-DD'), 4);
 
-  INSERT INTO TYP_SRODKOW_ENCJA_SLOWNIKOWA (NAZWA_FUNDUSZU)
-  VALUES ('Zajecia sportowo-rekreacyjne');
+INSERT INTO oswiadczenie_zarobkowe (dochod_na_czlonka_rodziny, data, wnioskodawcy_id_uzytkownika)
+VALUES (4000, TO_DATE('2023-06-20', 'YYYY-MM-DD'), 5);
 
-  INSERT INTO TYP_SRODKOW_ENCJA_SLOWNIKOWA (NAZWA_FUNDUSZU)
-  VALUES ('Imprezy kulturalne');
-
-  INSERT INTO TYP_SRODKOW_ENCJA_SLOWNIKOWA (NAZWA_FUNDUSZU)
-  VALUES ('Zapomogi');
-
-  INSERT INTO TYP_SRODKOW_ENCJA_SLOWNIKOWA (NAZWA_FUNDUSZU)
-  VALUES ('Pomoc mieszkaniowa');
+INSERT INTO oswiadczenie_zarobkowe (dochod_na_czlonka_rodziny, data, wnioskodawcy_id_uzytkownika)
+VALUES (6000, TO_DATE('2023-06-21', 'YYYY-MM-DD'), 6);
+COMMIT;
 END;
 /
-
--- Dodanie Wartosci funduszu
---/
-BEGIN
-  INSERT INTO OPIS_FUNDUSZU (TYP_SRODKOW_ENCJA_SLOWNIKOWA_NAZWA_FUNDUSZU, ROK, KWOTA_PRZYZNANA, KWOTA_UZYTA, KWOTA_Z_POPRZEDNIEGO_ROKU)
-  VALUES ('Wypoczynek wakacyjny', 2022, 10000, 9000, NULL);
-
-  INSERT INTO OPIS_FUNDUSZU (TYP_SRODKOW_ENCJA_SLOWNIKOWA_NAZWA_FUNDUSZU, ROK, KWOTA_PRZYZNANA, KWOTA_UZYTA, KWOTA_Z_POPRZEDNIEGO_ROKU)
-  VALUES ('Zajecia sportowo-rekreacyjne', 2022, 1000, 1000, NULL);
-
-  INSERT INTO OPIS_FUNDUSZU (TYP_SRODKOW_ENCJA_SLOWNIKOWA_NAZWA_FUNDUSZU, ROK, KWOTA_PRZYZNANA, KWOTA_UZYTA, KWOTA_Z_POPRZEDNIEGO_ROKU)
-  VALUES ('Imprezy kulturalne', 2022, 3000, 200, NULL);
-
-  INSERT INTO OPIS_FUNDUSZU (TYP_SRODKOW_ENCJA_SLOWNIKOWA_NAZWA_FUNDUSZU, ROK, KWOTA_PRZYZNANA, KWOTA_UZYTA, KWOTA_Z_POPRZEDNIEGO_ROKU)
-  VALUES ('Zapomogi', 2022, 20000, 20000, NULL);
-
-  INSERT INTO OPIS_FUNDUSZU (TYP_SRODKOW_ENCJA_SLOWNIKOWA_NAZWA_FUNDUSZU, ROK, KWOTA_PRZYZNANA, KWOTA_UZYTA, KWOTA_Z_POPRZEDNIEGO_ROKU)
-  VALUES ('Pomoc mieszkaniowa', 2022, 10000, 9000, NULL);
-
-  INSERT INTO OPIS_FUNDUSZU (TYP_SRODKOW_ENCJA_SLOWNIKOWA_NAZWA_FUNDUSZU, ROK, KWOTA_PRZYZNANA, KWOTA_UZYTA, KWOTA_Z_POPRZEDNIEGO_ROKU)
-  VALUES ('Wypoczynek wakacyjny', 2023, 10000, 0, 1000);
-
-  INSERT INTO OPIS_FUNDUSZU (TYP_SRODKOW_ENCJA_SLOWNIKOWA_NAZWA_FUNDUSZU, ROK, KWOTA_PRZYZNANA, KWOTA_UZYTA, KWOTA_Z_POPRZEDNIEGO_ROKU)
-  VALUES ('Zajecia sportowo-rekreacyjne', 2023, 0, 1000, NULL);
-
-  INSERT INTO OPIS_FUNDUSZU (TYP_SRODKOW_ENCJA_SLOWNIKOWA_NAZWA_FUNDUSZU, ROK, KWOTA_PRZYZNANA, KWOTA_UZYTA, KWOTA_Z_POPRZEDNIEGO_ROKU)
-  VALUES ('Imprezy kulturalne', 2023, 3000, 0, 2800);
-
-  INSERT INTO OPIS_FUNDUSZU (TYP_SRODKOW_ENCJA_SLOWNIKOWA_NAZWA_FUNDUSZU, ROK, KWOTA_PRZYZNANA, KWOTA_UZYTA, KWOTA_Z_POPRZEDNIEGO_ROKU)
-  VALUES ('Zapomogi', 2023, 20000, 0, NULL);
-
-  INSERT INTO OPIS_FUNDUSZU (TYP_SRODKOW_ENCJA_SLOWNIKOWA_NAZWA_FUNDUSZU, ROK, KWOTA_PRZYZNANA, KWOTA_UZYTA, KWOTA_Z_POPRZEDNIEGO_ROKU)
-  VALUES ('Pomoc mieszkaniowa', 2023, 1000, 0, 1000);
-END;
-/
--- Dodanie formularzy
---/
-BEGIN
-  DodajFormularz(
-  'Formularz o wypoczynek wakacyjny',
-  'Wypoczynek wakacyjny',
-  'kwota,miejsce wakacji,zakres czasowy wypoczynku,ilosc osob',
-  'float,string,string,int',
-  '100,50,20,10');
-
-    DodajFormularz(
-  'Formularz o zajecia sportowo-rekreacyjne',
-  'Zajecia sportowo-rekreacyjne',
-  'kwota,placowka sportowa,ilosc godzin w tygodniu',
-  'float,string,int',
-  '100,30,10');
-
-  DodajFormularz(
-  'Formularz o imprezy kulturalne',
-  'Imprezy kulturalne',
-  'kwota,nazwa imprezy,maksymalna ilosc osob,dlugosc trwania,przeznaczenie srodkow',
-  'float,string,int,string,string',
-  ',,,,');
-
-  DodajFormularz(
-  'Formularz o zapomoge',
-  'Zapomogi',
-  'kwota,powod,przeznaczenie srodkow',
-  'float,string,string',
-  '100,40,50');
-
-  DodajFormularz(
-  'Formularz o pomoc mieszkaniowa',
-  'Pomoc mieszkaniowa',
-  'kwota,forma pomocy,powod',
-  'float,string,string',
-  '100,30,100');
-
-END;
-/
-
-
-
-
-

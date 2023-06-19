@@ -29,7 +29,7 @@ END;
 
 --/
 CREATE OR REPLACE PROCEDURE DodajWniosek (
-  p_nazwa_funduszu       IN VARCHAR2,
+  p_id_formularzu       IN VARCHAR2,
   p_zawartosc_formularza IN VARCHAR2,
   p_id_wnioskodawcy      IN NUMBER
 ) AS
@@ -37,13 +37,13 @@ v_data_zlozenia DATE := SYSDATE;
   v_status        VARCHAR2(20) := 'Oczekujacy';
 BEGIN
   INSERT INTO Wniosek (
-    TYP_SRODKOW_ENCJA_SLOWNIKOWA_NAZWA_FUNDUSZU,
+    typ_formularzu_id_formularzu,
     status,
     data_zlozenia,
     zawartosc_formularza,
     wnioskodawcy_id_uzytkownika
   ) VALUES (
-    p_nazwa_funduszu,
+    p_id_formularzu,
     v_status,
     v_data_zlozenia,
     p_zawartosc_formularza,
@@ -108,16 +108,19 @@ CREATE OR REPLACE PROCEDURE WyplacSrodki (
   p_id_wniosku      IN NUMBER,
   p_wartosc         IN NUMBER
 ) AS
-  v_nazwa_funduszu Wniosek.typ_srodkow_encja_slownikowa_nazwa_funduszu%TYPE;
+  v_nazwa_funduszu typ_srodkow_encja_slownikowa.nazwa_funduszu%TYPE;
   v_kwota_przyznana opis_funduszu.kwota_przyznana%TYPE;
   v_kwota_uzyta opis_funduszu.kwota_uzyta%TYPE;
   v_data_zlozenia DATE := SYSDATE;
   v_rok NUMBER;
 BEGIN
-  SELECT typ_srodkow_encja_slownikowa_nazwa_funduszu
+
+  SELECT p.typ_srodkow_encja_slownikowa_nazwa_funduszu
   INTO v_nazwa_funduszu
-  FROM Wniosek
-  WHERE id_wniosku = p_id_wniosku;
+FROM Wniosek w
+JOIN TYP_FORMULARZU f ON w.typ_formularzu_id_formularzu = f.id_formularzu
+JOIN POLACZENIE_POMIEDZY_FORMULARZAMI_A_TYPEM_SRODKOW p ON f.id_formularzu = p.typ_formularzu_id_formularzu
+WHERE id_wniosku = p_id_wniosku;
 
   v_rok := EXTRACT(YEAR FROM SYSDATE);
 
@@ -175,48 +178,57 @@ CREATE OR REPLACE PROCEDURE DodajFormularz (
   p_nazwa_formularzu      IN VARCHAR2,
   p_nazwa_funduszu        IN VARCHAR2,
   p_nazwy_pol             IN VARCHAR2,
-  p_typy_danych             IN VARCHAR2,
-  p_maksymalne_dlugosci     IN VARCHAR2
-
+  p_typy_danych           IN VARCHAR2,
+  p_maksymalne_dlugosci   IN VARCHAR2
 ) AS
-v_nazwy_pol SYS.ODCIVARCHAR2LIST := SYS.ODCIVARCHAR2LIST();
-v_typy_danych SYS.ODCIVARCHAR2LIST := SYS.ODCIVARCHAR2LIST();
-v_maksymalne_dlugosci SYS.ODCIVARCHAR2LIST := SYS.ODCIVARCHAR2LIST();
-v_separator VARCHAR2(10) := ',';
-v_id_formularzu typ_formularzu.id_formularzu%TYPE;
-v_id_typu typ_pol_formularzu.id_typu%TYPE;
-
+  v_nazwy_pol             SYS.ODCIVARCHAR2LIST := SYS.ODCIVARCHAR2LIST();
+  v_typy_danych           SYS.ODCIVARCHAR2LIST := SYS.ODCIVARCHAR2LIST();
+  v_maksymalne_dlugosci   SYS.ODCIVARCHAR2LIST := SYS.ODCIVARCHAR2LIST();
+  v_separator             VARCHAR2(10) := ',';
+  v_id_formularzu         typ_formularzu.id_formularzu%TYPE;
+  v_id_typu               typ_pol_formularzu.id_typu%TYPE;
 BEGIN
-FOR i IN 1 .. REGEXP_COUNT(p_nazwy_pol, v_separator) + 1 LOOP
-        v_nazwy_pol.EXTEND;
-        v_nazwy_pol(i) := REGEXP_SUBSTR(p_nazwy_pol, '[^' || v_separator || ']+', 1, i);
-    END LOOP;
+  FOR i IN 1 .. REGEXP_COUNT(p_nazwy_pol, v_separator) + 1 LOOP
+    v_nazwy_pol.EXTEND;
+    v_nazwy_pol(i) := REGEXP_SUBSTR(p_nazwy_pol, '[^' || v_separator || ']+', 1, i);
+  END LOOP;
 
-FOR i IN 1 .. REGEXP_COUNT(p_typy_danych, v_separator) + 1 LOOP
-        v_typy_danych.EXTEND;
-        v_typy_danych(i) := REGEXP_SUBSTR(p_typy_danych, '[^' || v_separator || ']+', 1, i);
-    END LOOP;
+  FOR i IN 1 .. REGEXP_COUNT(p_typy_danych, v_separator) + 1 LOOP
+    v_typy_danych.EXTEND;
+    v_typy_danych(i) := REGEXP_SUBSTR(p_typy_danych, '[^' || v_separator || ']+', 1, i);
+  END LOOP;
 
-FOR i IN 1 .. REGEXP_COUNT(p_maksymalne_dlugosci, v_separator) + 1 LOOP
-        v_maksymalne_dlugosci.EXTEND;
-        v_maksymalne_dlugosci(i) := REGEXP_SUBSTR(p_maksymalne_dlugosci, '[^' || v_separator || ']+', 1, i);
-    END LOOP;
+  FOR i IN 1 .. REGEXP_COUNT(p_maksymalne_dlugosci, v_separator) + 1 LOOP
+    v_maksymalne_dlugosci.EXTEND;
+    v_maksymalne_dlugosci(i) := REGEXP_SUBSTR(p_maksymalne_dlugosci, '[^' || v_separator || ']+', 1, i);
+  END LOOP;
 
-INSERT INTO typ_formularzu (nazwa_formularzu) VALUES (p_nazwa_formularzu) RETURNING id_formularzu INTO v_id_formularzu;
-INSERT INTO polaczenie_pomiedzy_formularzami_a_typem_srodkow (typ_srodkow_encja_slownikowa_nazwa_funduszu, typ_formularzu_id_formularzu)
-VALUES (p_nazwa_funduszu, v_id_formularzu);
-FOR i IN 1 .. v_nazwy_pol.COUNT LOOP
+  INSERT INTO typ_formularzu (nazwa_formularzu) VALUES (p_nazwa_formularzu) RETURNING id_formularzu INTO v_id_formularzu;
 
-SELECT id_typu INTO v_id_typu
-    FROM typ_pol_formularzu
-    WHERE typ_danej = v_typy_danych(i)
-    AND maksymalna_dlugosc = TO_NUMBER(v_maksymalne_dlugosci(i));
+  INSERT INTO polaczenie_pomiedzy_formularzami_a_typem_srodkow (typ_srodkow_encja_slownikowa_nazwa_funduszu, typ_formularzu_id_formularzu)
+  VALUES (p_nazwa_funduszu, v_id_formularzu);
 
+  FOR i IN 1 .. v_nazwy_pol.COUNT LOOP
+    BEGIN
+      SELECT id_typu INTO v_id_typu
+      FROM typ_pol_formularzu
+      WHERE typ_danej = v_typy_danych(i)
+      AND maksymalna_dlugosc = TO_NUMBER(v_maksymalne_dlugosci(i));
 
-IF v_id_typu IS NOT NULL THEN
+      -- Jeśli zapytanie SELECT nie znajdzie rekordu, przechodzimy do bloku EXCEPTION
+      -- i wykonujemy odpowiednie działania w przypadku braku danych
+      EXCEPTION
+        WHEN NO_DATA_FOUND THEN
+          -- Tutaj możesz wpisać kod obsługi braku danych, np. ustawienie wartości v_id_typu na NULL
+          v_id_typu := NULL;
+    END;
+
+    IF v_id_typu IS NOT NULL THEN
+      -- Wykonaj działania, gdy id_typu zostało znalezione
       INSERT INTO pola_formularzu (nazwa_pola, typ_pol_formularzu_id_typu, typ_formularzu_id_formularzu)
       VALUES (v_nazwy_pol(i), v_id_typu, v_id_formularzu);
     ELSE
+      -- Wykonaj działania, gdy id_typu nie zostało znalezione
       -- Wstaw nowy rekord do tabeli typ_pol_formularzu i pobierz nowe id_typu
       INSERT INTO typ_pol_formularzu (typ_danej, maksymalna_dlugosc)
       VALUES (v_typy_danych(i), TO_NUMBER(v_maksymalne_dlugosci(i)))
@@ -226,7 +238,7 @@ IF v_id_typu IS NOT NULL THEN
       INSERT INTO pola_formularzu (nazwa_pola, typ_pol_formularzu_id_typu, typ_formularzu_id_formularzu)
       VALUES (v_nazwy_pol(i), v_id_typu, v_id_formularzu);
     END IF;
-END LOOP;
+  END LOOP;
 
   COMMIT;
   DBMS_OUTPUT.PUT_LINE('Pomyslnie dodano formularz.');
