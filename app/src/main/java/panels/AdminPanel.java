@@ -15,6 +15,7 @@ public class AdminPanel extends JFrame
     public JButton addForm;
     public JButton deactivateForm;
     public JButton generateReport;
+    public JButton chooseApplicationToView;
     private String username;
     private JButton registerButton;
     public AdminPanel(int permissionLevel, String username)
@@ -37,12 +38,14 @@ public class AdminPanel extends JFrame
         addForm = new JButton("Add a new form for users");
         deactivateForm = new JButton("Deactivate a form");
         generateReport = new JButton("Generate an analytics report");
+        chooseApplicationToView = new JButton("View an application");
 
         splitPane.setEnabled(false);
         loginPanel.add(loginLabel);
 
-        centralPanel.setLayout(new GridLayout(3, 1, 100, 100));
-        centralPanel.add(addForm); centralPanel.add(deactivateForm); centralPanel.add(generateReport);
+        centralPanel.setLayout(new GridLayout(4, 1, 100, 100));
+        centralPanel.add(chooseApplicationToView); centralPanel.add(addForm);
+        centralPanel.add(deactivateForm); centralPanel.add(generateReport);
 
         loginPanel.add(login);
 

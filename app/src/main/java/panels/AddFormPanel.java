@@ -8,6 +8,8 @@ import javax.swing.*;
 import javax.swing.event.TableModelEvent;
 import javax.swing.event.TableModelListener;
 import javax.swing.table.DefaultTableModel;
+import java.awt.*;
+
 @Getter
 public class AddFormPanel extends BasePanel {
     public JTable formTable;
@@ -15,6 +17,7 @@ public class AddFormPanel extends BasePanel {
     private Boolean creatingPanel = true;
 
     private InteractiveJTextField formName;
+    private InteractiveJTextField fundName;
 
     private DefaultTableModel formTableModel;
     public AddFormPanel(){
@@ -45,7 +48,7 @@ public class AddFormPanel extends BasePanel {
             }
         });
 
-
+        JPanel upperPanel = new JPanel();
         formTable = new JTable(formTableModel);
         formTable.getTableHeader().setReorderingAllowed(false);
 
@@ -57,10 +60,14 @@ public class AddFormPanel extends BasePanel {
         formTableModel.addRow(new Object[]{null,null,null});
         JScrollPane scrollPane = new JScrollPane(formTable);
         formName = new InteractiveJTextField("Type the name of the new form");
+        fundName = new InteractiveJTextField("Type the name of the fund");
         JSplitPane splitPane = new JSplitPane();
         splitPane.setOrientation(JSplitPane.VERTICAL_SPLIT);
         splitPane.setEnabled(false);
-        splitPane.setLeftComponent(formName);
+        upperPanel.add(formName);
+        upperPanel.add(fundName);
+        upperPanel.setLayout(new GridLayout(2,1,10,10));
+        splitPane.setLeftComponent(upperPanel);
         splitPane.setRightComponent(scrollPane);
         getUpperPanel().add(splitPane);
         creatingPanel = false;
