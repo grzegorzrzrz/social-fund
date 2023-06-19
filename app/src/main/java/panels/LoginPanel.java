@@ -8,8 +8,11 @@ import java.awt.*;
 public class LoginPanel extends BasePanel{
     private InteractiveJPasswordField password;
     private InteractiveJTextField username;
+
+    private JButton registerButton;
     public LoginPanel()
     {
+        registerButton = new JButton("register");
         getAcceptButton().setText("login");
         password = new InteractiveJPasswordField("password");
         username = new InteractiveJTextField("username");
@@ -20,5 +23,9 @@ public class LoginPanel extends BasePanel{
         getUpperPanel().setLayout(new GridLayout(1,2, 150, 200));
         getUpperPanel().setBorder(BorderFactory.createEmptyBorder(50, 0, 50, 0));
         setVisible(true);
+
+        getBottomPanel().add(registerButton);
+        getBottomPanel().setLayout(new GridLayout(1,3,50,50));
     }
 }
+

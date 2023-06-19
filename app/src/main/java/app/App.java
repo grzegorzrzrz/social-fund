@@ -88,11 +88,14 @@ public class App {
     private void DoProcessAnApplication(Integer chosenID) {
         Application temp = new Application();
         ProcessAnApplication processAnApplication = new ProcessAnApplication(temp);
+        int a = 5;
+
         processAnApplication.getCancelButton().addActionListener(e -> {
             processAnApplication.dispose();
             ChooseAnApplicationToView();
         });
         processAnApplication.getAcceptButton().addActionListener(e ->{
+
         });
     }
 
