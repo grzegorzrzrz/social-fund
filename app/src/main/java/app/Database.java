@@ -114,7 +114,7 @@ public class Database {
             ResultSet rs = Select(sql);
             Vector<Pair<Integer, Date>> applications = new Vector<Pair<Integer, Date>>();
             while (rs.next()) {
-                applications.add(new Pair<Integer, Date>(rs.getInt(1), rs.getDate(2)));
+                applications.add(Pair.of(rs.getInt(1), rs.getDate(2)));
             }
             rs.close();
             stmt.close();
