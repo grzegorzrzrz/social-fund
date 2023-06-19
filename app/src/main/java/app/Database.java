@@ -312,8 +312,9 @@ public class Database {
 
     /**
      * @param form form template to be added to database
+     * @return message
      */
-    public void AddForm(Form form) {
+    public String AddForm(Form form) {
         String fieldNames = "";
         String fieldTypes = "";
         String fieldMaxLengths = "";
@@ -324,6 +325,7 @@ public class Database {
         }
         String sql = "call DodajFormularz(" + form.getName() + ", '" + form.getFundName() + "', '" + fieldNames + "', '" + fieldTypes + "', '" + fieldMaxLengths + "')";
         Procedure(sql);
+        return "Successfully added a new form";
     }
 
     /**
