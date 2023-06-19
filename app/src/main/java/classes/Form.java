@@ -12,6 +12,7 @@ public class Form {
     public String name;
     public String fundName;
     public ArrayList<FormField> fields;
+
     public Form()
     {
         fields=new ArrayList<FormField>();

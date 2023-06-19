@@ -1,9 +1,8 @@
 package app;
 
-import classes.Application;
-import classes.Form;
-import classes.User;
+import classes.*;
 import lib.Settings;
+import org.apache.commons.lang3.tuple.Pair;
 import panels.*;
 
 import javax.swing.*;
@@ -11,16 +10,17 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.PrintWriter;
 import java.sql.Date;
+import java.util.ArrayList;
 
+import java.sql.Date;
+import java.util.Vector;
 
 public class App {
-    // permission level 0 - not logged in
-    // permission level 1 - logged in as user
-    // permission level 2 - logged as employee
-    private int permissionLevel = 0;
-    private int userID = 0;
-    private String username = "";
+    public int debugLoginUser = -1; // TODO REMOVE change this to login without database
+    private User user;
+
     public App(){
+        user = new User();
         Login();
     }
 
@@ -30,10 +30,10 @@ public class App {
     public void Run()
     {
         //listeners for panels that are visible on specific permission level
-        switch(permissionLevel){
+        switch(user.getPermissionLevel()){
             case 0 ->{Login();}
             case 1 ->{
-                UserPanel userPanel = new UserPanel(permissionLevel, username);
+                UserPanel userPanel = new UserPanel(user.getPermissionLevel(), user.getLogin());
                 userPanel.login.setText("Login");
                 userPanel.myApplication.addActionListener(e -> {
                     showApplicattions();
@@ -47,8 +47,12 @@ public class App {
             }
 
             case 2 -> { // logged as an admin
-                AdminPanel adminPanel = new AdminPanel(permissionLevel, username);
+                AdminPanel adminPanel = new AdminPanel(user.getPermissionLevel(), user.getLogin());
                 adminPanel.login.setText("Logout");
+                adminPanel.chooseApplicationToView.addActionListener(e ->{
+                    ChooseAnApplicationToView();
+                    adminPanel.dispose();
+                });
                 adminPanel.getAddForm().addActionListener(e -> {
                     AddForm();
                     adminPanel.dispose();
@@ -65,11 +69,36 @@ public class App {
         }
     }
 
+    private void ChooseAnApplicationToView() {
+        Vector<Pair<Integer, Date>> temp = new Vector<Pair<Integer, Date>>();
+        //Pair<Integer, Date> aha = Pair.of(1, new Date(10000));
+        temp.add(Pair.of(1, new Date(10000)));
+        temp.add(Pair.of(2, new Date(1000000000)));
+        ChooseApplicationToView chooseApplicationToView = new ChooseApplicationToView(temp);
+        chooseApplicationToView.getCancelButton().addActionListener(e -> disposeSubPanel(chooseApplicationToView));
+        chooseApplicationToView.getAcceptButton().addActionListener(e ->{
+        Integer chosenID = (Integer) chooseApplicationToView.getApplicationsBox().getSelectedItem();
+        chooseApplicationToView.dispose();
+        DoProcessAnApplication(chosenID);
+        });
+    }
+
+    private void DoProcessAnApplication(Integer chosenID) {
+        Application temp = new Application();
+        ProcessAnApplication processAnApplication = new ProcessAnApplication(temp);
+        processAnApplication.getCancelButton().addActionListener(e -> {
+            processAnApplication.dispose();
+            ChooseAnApplicationToView();
+        });
+        processAnApplication.getAcceptButton().addActionListener(e ->{
+        });
+    }
+
     private void addApplication() {
         chooseform chose =new chooseform();
         chose.getCancelButton().addActionListener(e -> disposeSubPanel(chose));
         chose.getAcceptButton().addActionListener(e -> {
-            Application application= new Application("denied",new Date(2023,11,8), new Form());
+            Application application= new Application(new Applicant(),"denied",new Date(2023,11,8), new Form());
             chose.dispose();
             fillAplication fill =new fillAplication(application);
             fill.getCancelButton().addActionListener(m ->disposeSubPanel(fill));
@@ -87,12 +116,12 @@ public class App {
 
 
     private void showApplicattions() {
-        ShowApplications Showapplications= new ShowApplications(username);
+        ShowApplications Showapplications= new ShowApplications(user.getLogin());
 
         Showapplications.getCancelButton().addActionListener(
                 e ->{ disposeSubPanel(Showapplications);});
         Showapplications.getAcceptButton().addActionListener(e->{
-            Application application= new Application("denied",new Date(2023,11,8), new Form());//getmockdatebase
+            Application application= new Application(new Applicant(), "denied",new Date(2023,11,8), new Form());//getmockdatebase
             Showapplications.dispose();
             show prewiev= new show(application);//Settings.getInstance().database.getAplication(aplication id)
             prewiev.getCancelButton().addActionListener(
@@ -116,6 +145,14 @@ public class App {
         AddFormPanel addFormPanel = new AddFormPanel();
         addFormPanel.getCancelButton().addActionListener(e-> disposeSubPanel(addFormPanel));
         addFormPanel.getAcceptButton().addActionListener(e ->{
+            ArrayList<FormField> fields = new ArrayList<>();
+
+            for (var vector:
+                    addFormPanel.getFormTableModel().getDataVector()) {
+                fields.add(new FormField(vector));
+            }
+
+            Form newForm = new Form(addFormPanel.getFormName().getText(), addFormPanel.getFundName().getText(), fields);
             //String message = Settings.getInstance().database.CreateNewForm(addFormPanel.getFormName().getText(), addFormPanel.getFormTableModel().getDataVector());
             //handleMessagePanel(addFormPanel, message);
         });
@@ -148,7 +185,7 @@ public class App {
         registerPanel.getCancelButton().addActionListener(e -> disposeSubPanel(registerPanel));
         registerPanel.getAcceptButton().addActionListener(e -> {
             User newUser = new User(registerPanel.getPersonsName().getText(), registerPanel.getSurname().getText(),
-                    registerPanel.getLogin().getText(), registerPanel.getPassword().getText());
+                    registerPanel.getLogin().getText(), registerPanel.getPassword().getText(), 1, 0);
             try {
                 Settings.getInstance().mockDatabase.registerUser(newUser);
             }
@@ -166,35 +203,25 @@ public class App {
      *  gets information from database if login was successful.
      */
     private void Login() {
-        if (permissionLevel == 0) {
+        if(debugLoginUser != -1){//TODO REMOVE
+            user.setUserID(0);
+            user.setPermissionLevel(debugLoginUser);
+            Run();
+            return;
+        } else if (user.getPermissionLevel() == 0) {
             LoginPanel loginPanel = new LoginPanel();
             loginPanel.getAcceptButton().addActionListener(e -> {
-                int [] data = Settings.getInstance().mockDatabase.validateLoginData(loginPanel.getUsername().getText(), loginPanel.getPassword().getPassword());
-                switch (data[0])
-                {
-                    case 0 -> {// show window couldn't log in
-                        permissionLevel = 0;
-                        handleMessagePanel(loginPanel, "Login failed: invalid data");
-                    }
-                    case 1 -> {
-                        username = loginPanel.getUsername().getText();
-                        userID = data[1];
-                        permissionLevel = 1;
-                        disposeSubPanel(loginPanel);
-
-                    }
-                    case 2 -> {
-                        username = loginPanel.getUsername().getText();
-                        permissionLevel = 2;
-                        disposeSubPanel(loginPanel);
-                    }
-                }
+                Settings.getInstance().database.GetUser(user, loginPanel.getUsername().getText(), loginPanel.getPassword().getText());
+                if(user.getPermissionLevel() == 0)
+                    handleMessagePanel(loginPanel, "Login failed: invalid data");
+                else
+                    disposeSubPanel(loginPanel);
             });
             loginPanel.getCancelButton().addActionListener(e -> disposeSubPanel(loginPanel));
         }
         else {
-            permissionLevel=0;
-            userID=0;
+            user.setPermissionLevel(0);
+            user.setUserID(0);
             Run();
         }
     }

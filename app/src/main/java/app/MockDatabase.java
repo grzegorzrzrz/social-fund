@@ -101,7 +101,7 @@ public class MockDatabase {
 
     public ArrayList<Application> getAplications(String user) {
         ArrayList<Application> odp= new ArrayList<Application>();
-        Application application= new Application("denied",new Date(123,11,8), new Form());
+        Application application= new Application(new Applicant(), "denied",new Date(123,11,8), new Form());
         odp.add(application);
         return odp;
     }

@@ -1,9 +1,11 @@
 package app;
 
 import classes.*;
+import org.apache.commons.lang3.tuple.Pair;
 
 import java.sql.*;
 import java.util.ArrayList;
+import java.util.Vector;
 
 public class Database {
     private final String DBURL;
@@ -78,21 +80,21 @@ public class Database {
      * @param userID id of user
      * @return Array of integers with all form types ids
      */
-    public ArrayList<Integer> GetApplicationsByUserID(int userID) {
-        String sql = "select id_wniosku" +
+    public Vector<Pair<Integer, Date>> GetApplicationsByUserID(int userID) {
+        String sql = "select id_wniosku, data_zlozenia" +
                 "from WNIOSEK" +
                 "where id_uzytkownika=" + userID;
-        return GetApplicationIDs(sql);
+        return GetApplicationsVector(sql);
     }
 
     /**
      * @return Array of integers with all form types ids
      */
-    public ArrayList<Integer> GetPendingApplications() {
-        String sql = "select id_wniosku" +
+    public Vector<Pair<Integer, Date>>  GetPendingApplications() {
+        String sql = "select id_wniosku, data_zlozenia" +
                 "from WNIOSEK" +
                 "where status='Rozpatrywany'";
-        return GetApplicationIDs(sql);
+        return GetApplicationsVector(sql);
     }
 
     /**
@@ -107,17 +109,17 @@ public class Database {
      * @param sql sql query
      * @return Array of integers with all form types ids
      */
-    private ArrayList<Integer> GetApplicationIDs(String sql) {
+    private Vector<Pair<Integer, Date>>  GetApplicationsVector(String sql) {
         try {
             ResultSet rs = Select(sql);
-            ArrayList<Integer> formTypes = new ArrayList<>();
+            Vector<Pair<Integer, Date>> applications = new Vector<Pair<Integer, Date>>();
             while (rs.next()) {
-                formTypes.add(rs.getInt(1));
+                applications.add(Pair.of(rs.getInt(1), rs.getDate(2)));
             }
             rs.close();
             stmt.close();
             con.close();
-            return formTypes;
+            return applications;
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
@@ -129,7 +131,46 @@ public class Database {
      */
     public Application GetApplicationInfo(int applicationID) {
         String sql = "SELECT * FROM WNIOSEK WHERE id_wniosku = " + applicationID;
-        return GetApplicationInfo(sql).get(0);
+        Application application = GetApplicationInfo(sql).get(0);
+        return application;
+    }
+    public Applicant GetApplicantInfo(int applicantID) {
+        Applicant applicant = new Applicant();
+        applicant.setId(applicantID);
+        String sql = "SELECT * FROM wnioskodawcy WHERE wnioskodawcy_id_uzytkownika = " + applicantID;
+        GetApplicant(sql, applicant);
+        sql = "SELECT dochod_na_czlonka_rodziny FROM oswiadczenie_zarobkowe WHERE wnioskodawcy_id_uzytkownika = " + applicantID;
+        GetEarnings(sql, applicant);
+        return applicant;
+    }
+    private void GetEarnings(String sql, Applicant applicant) {
+        try {
+            ResultSet rs = Select(sql);
+            while (rs.next()) {
+                applicant.setEarnings(rs.getInt(1));
+            }
+            rs.close();
+            stmt.close();
+            con.close();
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+    private void GetApplicant(String sql, Applicant applicant) {
+        try {
+            ResultSet rs = Select(sql);
+            while (rs.next()) {
+                applicant.setCompany(rs.getString(2));
+                applicant.setPesel(rs.getString(3));
+                applicant.setBirthDate(rs.getDate(4));
+                applicant.setAccountNumber(rs.getInt(5));
+            }
+            rs.close();
+            stmt.close();
+            con.close();
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     /**
@@ -212,10 +253,10 @@ public class Database {
         String fund = rs.getString(1);
         int applicationID = rs.getInt(2);
         String status = rs.getString(3);
-        Date creationDate = rs.getDate(4);;
+        Date creationDate = rs.getDate(4);
         Form form = GetFormFromString(rs.getString(5));
-        Application application = new Application(status, creationDate, form);
-
+        int applicantID = rs.getInt(6);
+        Application application = new Application(GetApplicantInfo(applicantID), status, creationDate, form);
         return application;
     }
 
@@ -312,8 +353,9 @@ public class Database {
 
     /**
      * @param form form template to be added to database
+     * @return message
      */
-    public void AddForm(Form form) {
+    public String AddForm(Form form) {
         String fieldNames = "";
         String fieldTypes = "";
         String fieldMaxLengths = "";
@@ -324,6 +366,7 @@ public class Database {
         }
         String sql = "call DodajFormularz(" + form.getName() + ", '" + form.getFundName() + "', '" + fieldNames + "', '" + fieldTypes + "', '" + fieldMaxLengths + "')";
         Procedure(sql);
+        return "Successfully added a new form";
     }
 
     /**
@@ -410,23 +453,21 @@ public class Database {
      * @param password user password
      * @return user with given login and password
      */
-    private int GetUser(String login, String password) {
+    public void GetUser(User user, String login, String password) {
         String sql = "SELECT * FROM uzytkownicy WHERE login = '" + login + "' AND haslo = '" + password + "'";
         try {
             ResultSet rs = Select(sql);
             rs.next();
-            int userID = rs.getInt(1);
+            user.setUserID(rs.getInt(1));
             rs.close();
-
-            Boolean isAdmin = false; //TODO: check if user is admin and redo to User class
+            user.setPermissionLevel(1);
 
             // Check for admin
-            String sqlCheckAdmin = "SELECT * FROM rozpatrujacy WHERE id_uzytkownika = '" + userID + "'";
+            String sqlCheckAdmin = "SELECT * FROM rozpatrujacy WHERE id_uzytkownika = '" + user.getUserID() + "'";
             try {
                 ResultSet rsCheckAdmin = Select(sqlCheckAdmin);
-                rsCheckAdmin.next();
-                if (rsCheckAdmin.getInt(1) == userID) {
-                    isAdmin = true;
+                if (rsCheckAdmin.next()) {
+                    user.setPermissionLevel(2);
                 }
                 rsCheckAdmin.close();
             } catch (SQLException e) {
@@ -435,7 +476,6 @@ public class Database {
 
             stmt.close();
             con.close();
-            return userID;
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
