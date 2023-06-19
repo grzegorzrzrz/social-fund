@@ -453,23 +453,21 @@ public class Database {
      * @param password user password
      * @return user with given login and password
      */
-    private int GetUser(String login, String password) {
+    public void GetUser(User user, String login, String password) {
         String sql = "SELECT * FROM uzytkownicy WHERE login = '" + login + "' AND haslo = '" + password + "'";
         try {
             ResultSet rs = Select(sql);
             rs.next();
-            int userID = rs.getInt(1);
+            user.setUserID(rs.getInt(1));
             rs.close();
-
-            Boolean isAdmin = false; //TODO: check if user is admin and redo to User class
+            user.setPermissionLevel(1);
 
             // Check for admin
-            String sqlCheckAdmin = "SELECT * FROM rozpatrujacy WHERE id_uzytkownika = '" + userID + "'";
+            String sqlCheckAdmin = "SELECT * FROM rozpatrujacy WHERE id_uzytkownika = '" + user.getUserID() + "'";
             try {
                 ResultSet rsCheckAdmin = Select(sqlCheckAdmin);
-                rsCheckAdmin.next();
-                if (rsCheckAdmin.getInt(1) == userID) {
-                    isAdmin = true;
+                if (rsCheckAdmin.next()) {
+                    user.setPermissionLevel(2);
                 }
                 rsCheckAdmin.close();
             } catch (SQLException e) {
@@ -478,7 +476,6 @@ public class Database {
 
             stmt.close();
             con.close();
-            return userID;
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
