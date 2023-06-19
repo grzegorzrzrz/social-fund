@@ -1,3 +1,4 @@
+connect c##develop/oracle
 --/
 CREATE OR REPLACE PROCEDURE DodajWnioskodawce (
   p_login            IN VARCHAR2,
@@ -127,7 +128,7 @@ BEGIN
     AND Rok = v_rok;
 
   IF (v_kwota_uzyta + p_wartosc) > v_kwota_przyznana THEN
-    RAISE_APPLICATION_ERROR(-20001, 'Przekroczono przyznane środki.');
+    RAISE_APPLICATION_ERROR(-20001, 'Przekroczono przyznane srodki.');
   END IF;
 
   v_kwota_uzyta := v_kwota_uzyta + p_wartosc;
@@ -141,11 +142,11 @@ BEGIN
   VALUES (p_wartosc, v_data_zlozenia);
 
   COMMIT;
-  DBMS_OUTPUT.PUT_LINE('Pomyślnie wypłacono środki.');
+  DBMS_OUTPUT.PUT_LINE('Pomyslnie wyplacono srodki.');
 EXCEPTION
   WHEN OTHERS THEN
     ROLLBACK;
-    DBMS_OUTPUT.PUT_LINE('Wystąpił błąd podczas wypłacania środków: ' || SQLERRM);
+    DBMS_OUTPUT.PUT_LINE('Wystapil blad podczas wyplacania srodkow: ' || SQLERRM);
 END;
 /
 
@@ -167,7 +168,7 @@ EXCEPTION
     DBMS_OUTPUT.PUT_LINE('Wystapil blad podczas dezaktywowania formularzu: ' || SQLERRM);
 END;
 /
-connect c##develop/oracle
+
 
 --/
 CREATE OR REPLACE PROCEDURE DodajFormularz (
@@ -184,6 +185,7 @@ v_maksymalne_dlugosci SYS.ODCIVARCHAR2LIST := SYS.ODCIVARCHAR2LIST();
 v_separator VARCHAR2(10) := ',';
 v_id_formularzu typ_formularzu.id_formularzu%TYPE;
 v_id_typu typ_pol_formularzu.id_typu%TYPE;
+
 BEGIN
 FOR i IN 1 .. REGEXP_COUNT(p_nazwy_pol, v_separator) + 1 LOOP
         v_nazwy_pol.EXTEND;
@@ -204,8 +206,26 @@ INSERT INTO typ_formularzu (nazwa_formularzu) VALUES (p_nazwa_formularzu) RETURN
 INSERT INTO polaczenie_pomiedzy_formularzami_a_typem_srodkow (typ_srodkow_encja_slownikowa_nazwa_funduszu, typ_formularzu_id_formularzu)
 VALUES (p_nazwa_funduszu, v_id_formularzu);
 FOR i IN 1 .. v_nazwy_pol.COUNT LOOP
-INSERT INTO typ_pol_formularzu (typ_danej, maksymalna_dlugosc) VALUES (v_typy_danych(i), TO_NUMBER(v_maksymalne_dlugosci(i))) RETURNING id_typu INTO v_id_typu;
-INSERT INTO pola_formularzu (nazwa_pola, typ_pol_formularzu_id_typu, typ_formularzu_id_formularzu) VALUES (v_nazwy_pol(i), v_id_typu, v_id_formularzu);
+
+SELECT id_typu INTO v_id_typu
+    FROM typ_pol_formularzu
+    WHERE typ_danej = v_typy_danych(i)
+    AND maksymalna_dlugosc = TO_NUMBER(v_maksymalne_dlugosci(i));
+
+
+IF v_id_typu IS NOT NULL THEN
+      INSERT INTO pola_formularzu (nazwa_pola, typ_pol_formularzu_id_typu, typ_formularzu_id_formularzu)
+      VALUES (v_nazwy_pol(i), v_id_typu, v_id_formularzu);
+    ELSE
+      -- Wstaw nowy rekord do tabeli typ_pol_formularzu i pobierz nowe id_typu
+      INSERT INTO typ_pol_formularzu (typ_danej, maksymalna_dlugosc)
+      VALUES (v_typy_danych(i), TO_NUMBER(v_maksymalne_dlugosci(i)))
+      RETURNING id_typu INTO v_id_typu;
+
+      -- Wstaw rekord do tabeli pola_formularzu
+      INSERT INTO pola_formularzu (nazwa_pola, typ_pol_formularzu_id_typu, typ_formularzu_id_formularzu)
+      VALUES (v_nazwy_pol(i), v_id_typu, v_id_formularzu);
+    END IF;
 END LOOP;
 
   COMMIT;
