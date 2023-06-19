@@ -1,9 +1,11 @@
 package app;
 
 import classes.*;
+import org.apache.commons.lang3.tuple.Pair;
 
 import java.sql.*;
 import java.util.ArrayList;
+import java.util.Vector;
 
 public class Database {
     private final String DBURL;
@@ -78,21 +80,21 @@ public class Database {
      * @param userID id of user
      * @return Array of integers with all form types ids
      */
-    public ArrayList<Integer> GetApplicationsByUserID(int userID) {
-        String sql = "select id_wniosku" +
+    public Vector<Pair<Integer, Date>> GetApplicationsByUserID(int userID) {
+        String sql = "select id_wniosku, data_zlozenia" +
                 "from WNIOSEK" +
                 "where id_uzytkownika=" + userID;
-        return GetApplicationIDs(sql);
+        return GetApplicationsVector(sql);
     }
 
     /**
      * @return Array of integers with all form types ids
      */
-    public ArrayList<Integer> GetPendingApplications() {
-        String sql = "select id_wniosku" +
+    public Vector<Pair<Integer, Date>>  GetPendingApplications() {
+        String sql = "select id_wniosku, data_zlozenia" +
                 "from WNIOSEK" +
                 "where status='Rozpatrywany'";
-        return GetApplicationIDs(sql);
+        return GetApplicationsVector(sql);
     }
 
     /**
@@ -107,17 +109,17 @@ public class Database {
      * @param sql sql query
      * @return Array of integers with all form types ids
      */
-    private ArrayList<Integer> GetApplicationIDs(String sql) {
+    private Vector<Pair<Integer, Date>>  GetApplicationsVector(String sql) {
         try {
             ResultSet rs = Select(sql);
-            ArrayList<Integer> formTypes = new ArrayList<>();
+            Vector<Pair<Integer, Date>> applications = new Vector<Pair<Integer, Date>>();
             while (rs.next()) {
-                formTypes.add(rs.getInt(1));
+                applications.add(new Pair<Integer, Date>(rs.getInt(1), rs.getDate(2)));
             }
             rs.close();
             stmt.close();
             con.close();
-            return formTypes;
+            return applications;
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
