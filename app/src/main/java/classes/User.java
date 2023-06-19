@@ -9,6 +9,15 @@ import lombok.Setter;
 @Getter
 @Setter
 public class User {
+    public User()
+    {
+        name="Jan";
+        surname="Kowalski";
+        login="login";
+        password="password";
+        permissionLevel=0;
+        userID=0;
+    }
     String name;
     String surname;
     String login;
@@ -16,6 +25,6 @@ public class User {
     // permission level 0 - not logged in
     // permission level 1 - logged in as user
     // permission level 2 - logged as employee
-    private int permissionLevel = 0;
-    private int userID = 0;
+    private int permissionLevel;
+    private int userID;
 }

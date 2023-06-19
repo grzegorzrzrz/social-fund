@@ -16,10 +16,11 @@ import java.sql.Date;
 import java.util.Vector;
 
 public class App {
-    public int debugLoginUser = 2; // TODO REMOVE change this to login without database
+    public int debugLoginUser = -1; // TODO REMOVE change this to login without database
     private User user;
 
     public App(){
+        user = new User();
         Login();
     }
 
@@ -184,7 +185,7 @@ public class App {
         registerPanel.getCancelButton().addActionListener(e -> disposeSubPanel(registerPanel));
         registerPanel.getAcceptButton().addActionListener(e -> {
             User newUser = new User(registerPanel.getPersonsName().getText(), registerPanel.getSurname().getText(),
-                    registerPanel.getLogin().getText(), registerPanel.getPassword().getText());
+                    registerPanel.getLogin().getText(), registerPanel.getPassword().getText(), 1, 0);
             try {
                 Settings.getInstance().mockDatabase.registerUser(newUser);
             }
@@ -205,9 +206,9 @@ public class App {
         if(debugLoginUser != -1){//TODO REMOVE
             user.setUserID(0);
             user.setPermissionLevel(debugLoginUser);
+            Run();
             return;
-        }
-        if (user.getPermissionLevel() == 0) {
+        } else if (user.getPermissionLevel() == 0) {
             LoginPanel loginPanel = new LoginPanel();
             loginPanel.getAcceptButton().addActionListener(e -> {
                 Settings.getInstance().database.GetUser(user, loginPanel.getUsername().getText(), loginPanel.getPassword().getText());
