@@ -1,9 +1,6 @@
 package app;
 
-import classes.Application;
-import classes.Form;
-import classes.FormField;
-import classes.User;
+import classes.*;
 import lib.Settings;
 import org.apache.commons.lang3.tuple.Pair;
 import panels.*;
@@ -103,7 +100,7 @@ public class App {
         chooseform chose =new chooseform();
         chose.getCancelButton().addActionListener(e -> disposeSubPanel(chose));
         chose.getAcceptButton().addActionListener(e -> {
-            Application application= new Application("denied",new Date(2023,11,8), new Form());
+            Application application= new Application(new Applicant(),"denied",new Date(2023,11,8), new Form());
             chose.dispose();
             fillAplication fill =new fillAplication(application);
             fill.getCancelButton().addActionListener(m ->disposeSubPanel(fill));
@@ -126,7 +123,7 @@ public class App {
         Showapplications.getCancelButton().addActionListener(
                 e ->{ disposeSubPanel(Showapplications);});
         Showapplications.getAcceptButton().addActionListener(e->{
-            Application application= new Application("denied",new Date(2023,11,8), new Form());//getmockdatebase
+            Application application= new Application(new Applicant(), "denied",new Date(2023,11,8), new Form());//getmockdatebase
             Showapplications.dispose();
             show prewiev= new show(application);//Settings.getInstance().database.getAplication(aplication id)
             prewiev.getCancelButton().addActionListener(

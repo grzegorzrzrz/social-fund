@@ -132,11 +132,16 @@ public class Database {
     public Application GetApplicationInfo(int applicationID) {
         String sql = "SELECT * FROM WNIOSEK WHERE id_wniosku = " + applicationID;
         Application application = GetApplicationInfo(sql).get(0);
-        sql = "SELECT * FROM wnioskodawcy WHERE wnioskodawcy_id_uzytkownika = " + application.getApplicant().getId();
-        GetApplicant(sql, application.getApplicant());
-        sql = "SELECT dochod_na_czlonka_rodziny FROM oswiadczenie_zarobkowe WHERE wnioskodawcy_id_uzytkownika = " + application.getApplicant().getId();
-        GetEarnings(sql, application.getApplicant());
-        return GetApplicationInfo(sql).get(0);
+        return application;
+    }
+    public Applicant GetApplicantInfo(int applicantID) {
+        Applicant applicant = new Applicant();
+        applicant.setId(applicantID);
+        String sql = "SELECT * FROM wnioskodawcy WHERE wnioskodawcy_id_uzytkownika = " + applicantID;
+        GetApplicant(sql, applicant);
+        sql = "SELECT dochod_na_czlonka_rodziny FROM oswiadczenie_zarobkowe WHERE wnioskodawcy_id_uzytkownika = " + applicantID;
+        GetEarnings(sql, applicant);
+        return applicant;
     }
     private void GetEarnings(String sql, Applicant applicant) {
         try {
@@ -251,8 +256,7 @@ public class Database {
         Date creationDate = rs.getDate(4);
         Form form = GetFormFromString(rs.getString(5));
         int applicantID = rs.getInt(6);
-        Application application = new Application(applicantID, status, creationDate, form);
-
+        Application application = new Application(GetApplicantInfo(applicantID), status, creationDate, form);
         return application;
     }
 
