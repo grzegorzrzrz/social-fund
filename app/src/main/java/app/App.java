@@ -49,6 +49,10 @@ public class App {
             case 2 -> { // logged as an admin
                 AdminPanel adminPanel = new AdminPanel(user.getPermissionLevel(), user.getLogin());
                 adminPanel.login.setText("Logout");
+                adminPanel.login.addActionListener(e -> {
+                    adminPanel.dispose();
+                    Login();
+                });
                 adminPanel.chooseApplicationToView.addActionListener(e ->{
                     ChooseAnApplicationToView();
                     adminPanel.dispose();
@@ -211,7 +215,9 @@ public class App {
         } else if (user.getPermissionLevel() == 0) {
             LoginPanel loginPanel = new LoginPanel();
             loginPanel.getAcceptButton().addActionListener(e -> {
-                Settings.getInstance().database.GetUser(user, loginPanel.getUsername().getText(), loginPanel.getPassword().getText());
+                user.setLogin(loginPanel.getUsername().getText());
+                user.setPassword(loginPanel.getPassword().getText());
+                Settings.getInstance().database.GetUser(user);
                 if(user.getPermissionLevel() == 0)
                     handleMessagePanel(loginPanel, "Login failed: invalid data");
                 else
