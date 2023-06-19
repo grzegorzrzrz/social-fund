@@ -22,10 +22,12 @@ public class LoginPanel extends BasePanel{
         getUpperPanel().add(password);
         getUpperPanel().setLayout(new GridLayout(1,2, 150, 200));
         getUpperPanel().setBorder(BorderFactory.createEmptyBorder(50, 0, 50, 0));
-        setVisible(true);
 
         getBottomPanel().add(registerButton);
         getBottomPanel().setLayout(new GridLayout(1,3,50,50));
+
+        setTitle("Login");
+        setVisible(true);
     }
 }
 

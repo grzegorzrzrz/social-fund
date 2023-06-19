@@ -205,18 +205,17 @@ public class App {
                 Settings.getInstance().database.AddNewUser(registerPanel.getLogin().getText(),
                         registerPanel.getPassword().getText(), registerPanel.getPersonsName().getText(),
                         registerPanel.getSurname().getText(), registerPanel.getCompany().getText(),
-                        registerPanel.getPesel().getText(), birthDate,
-                        registerPanel.getAccountNumber().getText());
+                        registerPanel.getPesel().getText(), birthDate);
+
+                handleMessagePanel(registerPanel, "Successfully created a new account");
+            }
+            catch (NumberFormatException ex){
+                handleMessagePanel(registerPanel, "ERROR, incorrect data in Birth Date field");
             }
             catch (RuntimeException exc)
             {
                 handleMessagePanel(registerPanel, "Could not create a new user account!");
             }
-            catch (NumberFormatException ex){
-                handleMessagePanel(registerPanel, "ERROR, incorrect data in Birth Date field");
-            }
-            registerPanel.dispose();
-            Login();
         });
     }
 

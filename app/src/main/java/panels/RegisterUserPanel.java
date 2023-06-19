@@ -13,22 +13,21 @@ public class RegisterUserPanel extends BasePanel {
     private InteractiveJTextField company;
     private InteractiveJTextField pesel;
     private InteractiveJTextField birthDate;
-    private InteractiveJTextField accountNumber;
 
     public RegisterUserPanel() {
-        personsName = new InteractiveJTextField("Type your name");
-        surname = new InteractiveJTextField("Type your surname");
-        login = new InteractiveJTextField("Type your account login");
-        password = new InteractiveJPasswordField("Type your password");
-        company = new InteractiveJTextField("Type the name of your company");
-        pesel = new InteractiveJTextField("Type your PESEL number");
-        birthDate = new InteractiveJTextField("Type your Birth Date format is yyyy-mm-dd");
-        accountNumber = new InteractiveJTextField("Type your bank account number");
+        personsName = new InteractiveJTextField("Name");
+        surname = new InteractiveJTextField("Surname");
+        login = new InteractiveJTextField("Account login");
+        password = new InteractiveJPasswordField("Password");
+        company = new InteractiveJTextField("Name of your company");
+        pesel = new InteractiveJTextField("PESEL number");
+        birthDate = new InteractiveJTextField("Birth Date format is yyyy-mm-dd");
 
 
         getUpperPanel().setLayout(new GridLayout(4,2,50,50));
         getUpperPanel().add(personsName);getUpperPanel().add(surname); getUpperPanel().add(login); getUpperPanel().add(password);
-        getUpperPanel().add(company); getUpperPanel().add(pesel); getUpperPanel().add(birthDate); getUpperPanel().add(accountNumber);
+        getUpperPanel().add(company); getUpperPanel().add(pesel); getUpperPanel().add(birthDate);
+        setTitle("Register");
         setVisible(true);
     }
 }
