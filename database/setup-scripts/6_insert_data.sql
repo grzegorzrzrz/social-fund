@@ -6,22 +6,22 @@ DECLARE
   v_id_uzytkownika NUMBER;
 BEGIN
   INSERT INTO Uzytkownicy (imie, nazwisko, haslo, login)
-  VALUES ('Jan', 'D�b', 'admin1', 'admin1')
+  VALUES ('Jan', 'Dab', 'admin1', 'admin1')
   RETURNING id_uzytkownika INTO v_id_uzytkownika;
   INSERT INTO Rozpatrujacy (id_uzytkownika, pozycja_w_firmie, dzial_firmy)
   VALUES (v_id_uzytkownika, 'Specjalista', 'Finanse');
-  
+
     INSERT INTO Uzytkownicy (imie, nazwisko, haslo, login)
   VALUES ('Katarzyna', 'Piec', 'admin2', 'admin2')
   RETURNING id_uzytkownika INTO v_id_uzytkownika;
   INSERT INTO Rozpatrujacy (id_uzytkownika, pozycja_w_firmie, dzial_firmy)
-  VALUES (v_id_uzytkownika, 'Specjalista', 'Kadry i p�ace');
-  
+  VALUES (v_id_uzytkownika, 'Specjalista', 'Kadry i place');
+
       INSERT INTO Uzytkownicy (imie, nazwisko, haslo, login)
-  VALUES ('Bart�omiej', '�bik', 'admin3', 'admin3')
+  VALUES ('Bartlomiej', 'Zbik', 'admin3', 'admin3')
   RETURNING id_uzytkownika INTO v_id_uzytkownika;
   INSERT INTO Rozpatrujacy (id_uzytkownika, pozycja_w_firmie, dzial_firmy)
-  VALUES (v_id_uzytkownika, 'Asystent', 'Kadry i p�ace');
+  VALUES (v_id_uzytkownika, 'Asystent', 'Kadry i place');
 END;
 /
 -- Dodanie uzytkownikow wnioskodawcow
@@ -51,7 +51,7 @@ DodajWnioskodawce(
 p_login => 'adamw',
 p_haslo => 'qwerty',
 p_imie => 'Adam',
-p_nazwisko => 'W�jcik',
+p_nazwisko => 'Wojcik',
 p_pozycja => 'Analityk',
 p_pesel => '45678912322',
 p_data_urodzenia => TO_DATE('1988-09-25', 'YYYY-MM-DD')
@@ -61,7 +61,7 @@ DodajWnioskodawce(
 p_login => 'magdab',
 p_haslo => 'haslo123',
 p_imie => 'Magda',
-p_nazwisko => 'B�aszczyk',
+p_nazwisko => 'Blaszczyk',
 p_pozycja => 'Dyrektor',
 p_pesel => '11122233344',
 p_data_urodzenia => TO_DATE('1976-03-14', 'YYYY-MM-DD')
@@ -76,7 +76,7 @@ BEGIN
   VALUES ('Wypoczynek wakacyjny');
 
   INSERT INTO TYP_SRODKOW_ENCJA_SLOWNIKOWA (NAZWA_FUNDUSZU)
-  VALUES ('Zaj�cia sportowo-rekreacyjne');
+  VALUES ('Zajecia sportowo-rekreacyjne');
 
   INSERT INTO TYP_SRODKOW_ENCJA_SLOWNIKOWA (NAZWA_FUNDUSZU)
   VALUES ('Imprezy kulturalne');
@@ -96,7 +96,7 @@ BEGIN
   VALUES ('Wypoczynek wakacyjny', 2022, 10000, 9000, NULL);
 
   INSERT INTO OPIS_FUNDUSZU (TYP_SRODKOW_ENCJA_SLOWNIKOWA_NAZWA_FUNDUSZU, ROK, KWOTA_PRZYZNANA, KWOTA_UZYTA, KWOTA_Z_POPRZEDNIEGO_ROKU)
-  VALUES ('Zaj�cia sportowo-rekreacyjne', 2022, 1000, 1000, NULL);
+  VALUES ('Zajecia sportowo-rekreacyjne', 2022, 1000, 1000, NULL);
 
   INSERT INTO OPIS_FUNDUSZU (TYP_SRODKOW_ENCJA_SLOWNIKOWA_NAZWA_FUNDUSZU, ROK, KWOTA_PRZYZNANA, KWOTA_UZYTA, KWOTA_Z_POPRZEDNIEGO_ROKU)
   VALUES ('Imprezy kulturalne', 2022, 3000, 200, NULL);
@@ -111,7 +111,7 @@ BEGIN
   VALUES ('Wypoczynek wakacyjny', 2023, 10000, 0, 1000);
 
   INSERT INTO OPIS_FUNDUSZU (TYP_SRODKOW_ENCJA_SLOWNIKOWA_NAZWA_FUNDUSZU, ROK, KWOTA_PRZYZNANA, KWOTA_UZYTA, KWOTA_Z_POPRZEDNIEGO_ROKU)
-  VALUES ('Zaj�cia sportowo-rekreacyjne', 2023, 0, 1000, NULL);
+  VALUES ('Zajecia sportowo-rekreacyjne', 2023, 0, 1000, NULL);
 
   INSERT INTO OPIS_FUNDUSZU (TYP_SRODKOW_ENCJA_SLOWNIKOWA_NAZWA_FUNDUSZU, ROK, KWOTA_PRZYZNANA, KWOTA_UZYTA, KWOTA_Z_POPRZEDNIEGO_ROKU)
   VALUES ('Imprezy kulturalne', 2023, 3000, 0, 2800);
@@ -129,38 +129,38 @@ BEGIN
   DodajFormularz(
   'Formularz o wypoczynek wakacyjny',
   'Wypoczynek wakacyjny',
-  'kwota,miejsce wakacji,zakres czasowy wypoczynku,ilo�� os�b',
+  'kwota,miejsce wakacji,zakres czasowy wypoczynku,ilosc osob',
   'float,string,string,int',
   '100,50,20,10');
-  
+
     DodajFormularz(
-  'Formularz o zaj�cia sportowo-rekreacyjne',
-  'Zaj�cia sportowo-rekreacyjne',
-  'kwota,plac�wka sportowa,ilo�� godzin w tygodniu',
+  'Formularz o zajecia sportowo-rekreacyjne',
+  'Zajecia sportowo-rekreacyjne',
+  'kwota,placowka sportowa,ilosc godzin w tygodniu',
   'float,string,int',
   '100,30,10');
-  
+
   DodajFormularz(
   'Formularz o imprezy kulturalne',
   'Imprezy kulturalne',
-  'kwota,nazwa imprezy,maksymalna ilo�� os�b,d�ugo�� trwania,przeznaczenie �rodk�w',
+  'kwota,nazwa imprezy,maksymalna ilosc osob,dlugosc trwania,przeznaczenie srodkow',
   'float,string,int,string,string',
   ',,,,');
-  
+
   DodajFormularz(
   'Formularz o zapomoge',
   'Zapomogi',
-  'kwota,pow�d,przeznaczenie �rodk�w',
+  'kwota,powod,przeznaczenie srodkow',
   'float,string,string',
   '100,40,50');
-  
+
   DodajFormularz(
-  'Formularz o pomoc mieszkaniow�',
+  'Formularz o pomoc mieszkaniowa',
   'Pomoc mieszkaniowa',
-  'kwota,forma pomocy,pow�d',
+  'kwota,forma pomocy,powod',
   'float,string,string',
   '100,30,100');
-  
+
 END;
 /
 
