@@ -491,7 +491,7 @@ public class Database {
      * @param birthDate user birth date
      */
     private void AddNewUser(String login, String password, String name, String surname, String company, String pesel,
-                            String birthDate) {
+                            Date birthDate) {
         this.AddNewUser(login, password, name, surname, company, pesel, birthDate, "");
     }
 
@@ -506,7 +506,7 @@ public class Database {
      * @param accountNumber user account number
      */
     private void AddNewUser(String login, String password, String name, String surname, String company, String pesel,
-                            String birthDate, String accountNumber) {
+                            Date birthDate, String accountNumber) {
         String procedure = "call DodajWnioskodawce('" + login + "', '" + password + "', '" + name + "', '" + surname + "', '" +
                 company + "', '" + pesel + "', '" + birthDate + "', '" + accountNumber + "')";
         Procedure(procedure);
