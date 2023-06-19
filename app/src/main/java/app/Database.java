@@ -131,7 +131,41 @@ public class Database {
      */
     public Application GetApplicationInfo(int applicationID) {
         String sql = "SELECT * FROM WNIOSEK WHERE id_wniosku = " + applicationID;
+        Application application = GetApplicationInfo(sql).get(0);
+        sql = "SELECT * FROM wnioskodawcy WHERE wnioskodawcy_id_uzytkownika = " + application.getApplicant().getId();
+        GetApplicant(sql, application.getApplicant());
+        sql = "SELECT dochod_na_czlonka_rodziny FROM oswiadczenie_zarobkowe WHERE wnioskodawcy_id_uzytkownika = " + application.getApplicant().getId();
+        GetEarnings(sql, application.getApplicant());
         return GetApplicationInfo(sql).get(0);
+    }
+    private void GetEarnings(String sql, Applicant applicant) {
+        try {
+            ResultSet rs = Select(sql);
+            while (rs.next()) {
+                applicant.setEarnings(rs.getInt(1));
+            }
+            rs.close();
+            stmt.close();
+            con.close();
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+    private void GetApplicant(String sql, Applicant applicant) {
+        try {
+            ResultSet rs = Select(sql);
+            while (rs.next()) {
+                applicant.setCompany(rs.getString(2));
+                applicant.setPesel(rs.getString(3));
+                applicant.setBirthDate(rs.getDate(4));
+                applicant.setAccountNumber(rs.getInt(5));
+            }
+            rs.close();
+            stmt.close();
+            con.close();
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     /**
@@ -214,9 +248,10 @@ public class Database {
         String fund = rs.getString(1);
         int applicationID = rs.getInt(2);
         String status = rs.getString(3);
-        Date creationDate = rs.getDate(4);;
+        Date creationDate = rs.getDate(4);
         Form form = GetFormFromString(rs.getString(5));
-        Application application = new Application(status, creationDate, form);
+        int applicantID = rs.getInt(6);
+        Application application = new Application(applicantID, status, creationDate, form);
 
         return application;
     }
