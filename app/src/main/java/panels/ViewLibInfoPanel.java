@@ -19,47 +19,47 @@ public class ViewLibInfoPanel extends BasePanel {
     private JScrollPane scrollPane;
     private JLabel statusInfo;
     public ViewLibInfoPanel(){
-        setPreferredSize(Settings.getInstance().BIG_WINDOW_PREFERRED_SIZE);
-        setMinimumSize(Settings.getInstance().BIG_WINDOW_MIN_SIZE);
-        setLocation(Settings.getInstance().BIG_WINDOW_LOCATION_X, Settings.getInstance().BIG_WINDOW_LOCATION_Y);
-
-        statusInfo = new JLabel("Status: Waiting for change");
-        chooseLibrary = new JComboBox<>(Settings.getInstance().mockDatabase.getLibrariesNames());
-        LibraryInfoTableModel = new DefaultTableModel() {
-            @Override
-            public boolean isCellEditable(int row, int column) {
-                return false;
-            }
-        };
-        libraryInfo = new JTable(LibraryInfoTableModel);
-        chooseLibrary.setPreferredSize(new Dimension(300, 100));
-        statusInfo.setPreferredSize(new Dimension(300, 100));
-        libraryInfo.setPreferredSize(new Dimension(500, 500));
-        JSplitPane upperSplitPane = new JSplitPane();
-        upperSplitPane.setResizeWeight(0.5);
-        upperSplitPane.setAlignmentX(LEFT_ALIGNMENT);
-        upperSplitPane.setOrientation(HORIZONTAL_SPLIT);
-        upperSplitPane.setLeftComponent(chooseLibrary);
-        upperSplitPane.setRightComponent(statusInfo);
-        upperSplitPane.setDividerSize(50);
-        upperSplitPane.setEnabled(false);
-        Dimension minimumSize = new Dimension(100, 100);
-        chooseLibrary.setMinimumSize(minimumSize);
-        statusInfo.setMinimumSize(minimumSize);
-
-
-        scrollPane = new JScrollPane(libraryInfo);
-        scrollPane.setBorder(BorderFactory.createEmptyBorder(50,50,50,50));
-        scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_NEVER);
-        getBottomPanel().remove(getAcceptButton());
-        getUpperPanel().add(upperSplitPane);
-        getUpperPanel().add(scrollPane);
-        getUpperPanel().setLayout(new BoxLayout(getUpperPanel(),BoxLayout.Y_AXIS));
-        getLibraryInfoTableModel().setColumnCount(2);
-        scrollPane.getColumnHeader().setVisible(false);
-        setVisible(true);
-
-        fillLibraryInfo(Settings.getInstance().mockDatabase.getLibraryInfo(chooseLibrary.getSelectedItem().toString()));
+//        setPreferredSize(Settings.getInstance().BIG_WINDOW_PREFERRED_SIZE);
+//        setMinimumSize(Settings.getInstance().BIG_WINDOW_MIN_SIZE);
+//        setLocation(Settings.getInstance().BIG_WINDOW_LOCATION_X, Settings.getInstance().BIG_WINDOW_LOCATION_Y);
+//
+//        statusInfo = new JLabel("Status: Waiting for change");
+//        chooseLibrary = new JComboBox<>(Settings.getInstance().mockDatabase.getLibrariesNames());
+//        LibraryInfoTableModel = new DefaultTableModel() {
+//            @Override
+//            public boolean isCellEditable(int row, int column) {
+//                return false;
+//            }
+//        };
+//        libraryInfo = new JTable(LibraryInfoTableModel);
+//        chooseLibrary.setPreferredSize(new Dimension(300, 100));
+//        statusInfo.setPreferredSize(new Dimension(300, 100));
+//        libraryInfo.setPreferredSize(new Dimension(500, 500));
+//        JSplitPane upperSplitPane = new JSplitPane();
+//        upperSplitPane.setResizeWeight(0.5);
+//        upperSplitPane.setAlignmentX(LEFT_ALIGNMENT);
+//        upperSplitPane.setOrientation(HORIZONTAL_SPLIT);
+//        upperSplitPane.setLeftComponent(chooseLibrary);
+//        upperSplitPane.setRightComponent(statusInfo);
+//        upperSplitPane.setDividerSize(50);
+//        upperSplitPane.setEnabled(false);
+//        Dimension minimumSize = new Dimension(100, 100);
+//        chooseLibrary.setMinimumSize(minimumSize);
+//        statusInfo.setMinimumSize(minimumSize);
+//
+//
+//        scrollPane = new JScrollPane(libraryInfo);
+//        scrollPane.setBorder(BorderFactory.createEmptyBorder(50,50,50,50));
+//        scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_NEVER);
+//        getBottomPanel().remove(getAcceptButton());
+//        getUpperPanel().add(upperSplitPane);
+//        getUpperPanel().add(scrollPane);
+//        getUpperPanel().setLayout(new BoxLayout(getUpperPanel(),BoxLayout.Y_AXIS));
+//        getLibraryInfoTableModel().setColumnCount(2);
+//        scrollPane.getColumnHeader().setVisible(false);
+//        setVisible(true);
+//
+//        fillLibraryInfo(Settings.getInstance().mockDatabase.getLibraryInfo(chooseLibrary.getSelectedItem().toString()));
     }
 
     /**

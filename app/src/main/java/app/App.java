@@ -15,7 +15,7 @@ import java.util.ArrayList;
 import java.util.Vector;
 
 public class App {
-    public int debugLoginUser = 2; // TODO REMOVE change this to login without database
+    public int debugLoginUser = -1; // TODO REMOVE change this to login without database
     private User user;
 
     public App(){
@@ -102,7 +102,7 @@ public class App {
         chose.getAcceptButton().addActionListener(e -> {
             int formid= Integer.valueOf(chose.getForm_id().getText());
             Application application= new Application();
-            application.form=Settings.getInstance().database.GetFormbyid(formid);
+            application.form=Settings.getInstance().database.GetFormById(formid);
             if (application.form==null)
             {
                 disposeSubPanel(chose);
@@ -174,7 +174,7 @@ public class App {
                 if(add) fields.add(new FormField(vector));
             }
 
-            Form newForm = new Form(addFormPanel.getFormName().getText(),
+            Form newForm = new Form(0, addFormPanel.getFormName().getText(),
                     addFormPanel.getFundComboBox().getSelectedItem().toString(), fields);
             String message = Settings.getInstance().database.AddForm(newForm);
             handleMessagePanel(addFormPanel, message);

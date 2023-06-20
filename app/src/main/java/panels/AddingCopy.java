@@ -23,26 +23,26 @@ public class AddingCopy extends BasePanel {
      */
     public AddingCopy() {
 
-        chooseLibrary = new JComboBox<>(Settings.getInstance().mockDatabase.getLibrariesNames());
-        JSplitPane upperSplitPane5 = new JSplitPane();
-        upperSplitPane5.setResizeWeight(0.5);
-        upperSplitPane5.setOrientation(HORIZONTAL_SPLIT);
-        upperSplitPane5.setRightComponent(chooseLibrary);
-
-        upperSplitPane5.setEnabled(false);
-
-        a=Settings.getInstance().mockDatabase.getBooks("","","","");
-        ArrayList<String> b=new ArrayList<String>();
-        for (int i=0;i<a.size();i++)
-        {
-            b.add(a.get(i).getTitle());
-        }
-        chooseBook= new JComboBox<>(b.toArray(new String[b.size()]));
-        upperSplitPane5.setLeftComponent(chooseBook);
-
-        getUpperPanel().add(upperSplitPane5);
-
-        setVisible(true);
+//        chooseLibrary = new JComboBox<>(Settings.getInstance().mockDatabase.getLibrariesNames());
+//        JSplitPane upperSplitPane5 = new JSplitPane();
+//        upperSplitPane5.setResizeWeight(0.5);
+//        upperSplitPane5.setOrientation(HORIZONTAL_SPLIT);
+//        upperSplitPane5.setRightComponent(chooseLibrary);
+//
+//        upperSplitPane5.setEnabled(false);
+//
+//        a=Settings.getInstance().mockDatabase.getBooks("","","","");
+//        ArrayList<String> b=new ArrayList<String>();
+//        for (int i=0;i<a.size();i++)
+//        {
+//            b.add(a.get(i).getTitle());
+//        }
+//        chooseBook= new JComboBox<>(b.toArray(new String[b.size()]));
+//        upperSplitPane5.setLeftComponent(chooseBook);
+//
+//        getUpperPanel().add(upperSplitPane5);
+//
+//        setVisible(true);
     }
     /**
     * @return Selected book id
@@ -63,7 +63,8 @@ public class AddingCopy extends BasePanel {
      * @return Selected library id
      * */
     public int ReturnSelectedLibraryId() {
-        return  Settings.getInstance().mockDatabase.getLibraryInfo(chooseLibrary.getSelectedItem().toString()).getLibraryID();
+        return 0;
+        // Settings.getInstance().mockDatabase.getLibraryInfo(chooseLibrary.getSelectedItem().toString()).getLibraryID();
            }
 }
 
