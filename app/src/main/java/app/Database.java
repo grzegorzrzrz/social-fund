@@ -365,6 +365,22 @@ public class Database {
             throw new RuntimeException(e);
         }
     }
+    public Form GetFormbyid(int id){
+        String sql = "select * from typ_formularzu WHERE czy_aktywny = 1 AND id="+id;
+        try {
+            ResultSet rs = Select(sql);
+            ArrayList<Form> forms = new ArrayList<>();
+            while (rs.next()) {
+                int formTypeID = rs.getInt(1);
+                String formName = rs.getString(2);
+                ArrayList<FormField> formFields = GetFormFields(formTypeID);
+                return new Form(formName, "TODO", formFields);
+            }
+            return null;
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
 
     /**
      * @param formTypeID id of form type
@@ -419,7 +435,7 @@ public class Database {
     /**
      * @param application application to be added to database
      */
-    private void AddApplication(Application application, int userID) {
+    public void AddApplication(Application application, int userID) {
         String sql = "call DodajWniosek(" + application.getForm().getFundName() + ", '" + GetStringFromForm(application.getForm()) + "', " + userID + ")";
         Procedure(sql);
     }
@@ -496,11 +512,7 @@ public class Database {
     }
 
 
-    /**
-     * @param login user login
-     * @param password user password
-     * @return user with given login and password
-     */
+
     public void GetUser(User user) {
         String sql = "SELECT * FROM uzytkownicy WHERE login = '" + user.getLogin() + "' AND haslo = '" + user.getPassword() + "'";
         try {

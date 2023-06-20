@@ -101,7 +101,15 @@ public class App {
         chose.getCancelButton().addActionListener(e -> disposeSubPanel(chose));
         chose.getAcceptButton().addActionListener(e -> {
             int formid= Integer.valueOf(chose.getForm_id().getText());
-            Application application= new Application();//Todo stworzyć wniosek z użytkownika, form id i baza danych
+            Application application= new Application();
+            application.form=Settings.getInstance().database.GetFormbyid(formid);
+            if (application.form==null)
+            {
+                disposeSubPanel(chose);
+
+            }
+            else
+            {
             chose.dispose();
             fillAplication fill =new fillAplication(application);
             fill.getCancelButton().addActionListener(m ->disposeSubPanel(fill));
@@ -111,9 +119,11 @@ public class App {
                     application.form.fields.get(i).value=fill.pane.get(i).getLeftComponent().toString();
                 }
                 disposeSubPanel(fill);
+                Settings.getInstance().database.AddApplication(application,user.getUserID());
+
             });
 
-        });
+        }});
 
     }
 
