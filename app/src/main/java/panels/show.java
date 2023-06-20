@@ -2,6 +2,7 @@ package panels;
 
 import classes.Application;
 import lib.BasePanel;
+import lib.InteractiveJTextField;
 import lib.Settings;
 
 import javax.swing.*;
@@ -13,25 +14,23 @@ import static javax.swing.JSplitPane.HORIZONTAL_SPLIT;
 
 public class show  extends BasePanel {
 
-    private JTable libraryInfo;
-    private DefaultTableModel ShowApplicationsModel;
-    private JScrollPane scrollPane;
-    private JLabel statusInfo;
-    private ArrayList<JTextArea> dane;
+
+    private ArrayList<InteractiveJTextField> dane;
     private ArrayList<JLabel> opis;
     private ArrayList<JSplitPane> pane;
-    private JTextArea a;
+    private InteractiveJTextField a;
 
     public show(Application application) {
 
                 setPreferredSize(Settings.getInstance().BIG_WINDOW_PREFERRED_SIZE);
                 setMinimumSize(Settings.getInstance().BIG_WINDOW_MIN_SIZE);
-                dane=new ArrayList<JTextArea>();
+                dane=new ArrayList<InteractiveJTextField>();
                 opis =new ArrayList<JLabel>();
                 pane =new ArrayList<JSplitPane>();
                 setLocation(Settings.getInstance().BIG_WINDOW_LOCATION_X, Settings.getInstance().BIG_WINDOW_LOCATION_Y);
                 for (int i=0;i<application.form.getFields().size();i++)
-                { a =new JTextArea(application.getForm().getFields().get(i).getValue());
+                { a =new InteractiveJTextField(application.getForm().getFields().get(i).getValue());
+                    a.setEditable(false);
                     JLabel b=new JLabel(application.getForm().getFields().get(i).getName());
                     JSplitPane c= new JSplitPane();
                     dane.add(a);
@@ -40,8 +39,8 @@ public class show  extends BasePanel {
 
                     pane.get(i).setResizeWeight(0.5);
                     pane.get(i).setOrientation(HORIZONTAL_SPLIT);
-                    pane.get(i).setRightComponent(opis.get(i));
-                    pane.get(i).setLeftComponent(dane.get(i));
+                    pane.get(i).setLeftComponent(opis.get(i));
+                    pane.get(i).setRightComponent(dane.get(i));
                     pane.get(i).setEnabled(false);
                     getUpperPanel().add(pane.get(i));
 

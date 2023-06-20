@@ -100,7 +100,8 @@ public class App {
         chooseform chose =new chooseform();
         chose.getCancelButton().addActionListener(e -> disposeSubPanel(chose));
         chose.getAcceptButton().addActionListener(e -> {
-            Application application= new Application(new Applicant(),"denied",new Date(2023,11,8), new Form());
+            int formid= Integer.valueOf(chose.getForm_id().getText());
+            Application application= new Application();//Todo stworzyć wniosek z użytkownika, form id i baza danych
             chose.dispose();
             fillAplication fill =new fillAplication(application);
             fill.getCancelButton().addActionListener(m ->disposeSubPanel(fill));
@@ -118,14 +119,15 @@ public class App {
 
 
     private void showApplicattions() {
-        ShowApplications Showapplications= new ShowApplications(user.getLogin());
+        ShowApplications Showapplications= new ShowApplications(user);
 
         Showapplications.getCancelButton().addActionListener(
                 e ->{ disposeSubPanel(Showapplications);});
         Showapplications.getAcceptButton().addActionListener(e->{
-            Application application= new Application(new Applicant(), "denied",new Date(2023,11,8), new Form());//getmockdatebase
+
+            Application application= Settings.getInstance().database.GetApplicationInfo((Integer) Showapplications.applicationstable.getValueAt(Showapplications.applicationstable.getSelectedRow(),0));
             Showapplications.dispose();
-            show prewiev= new show(application);//Settings.getInstance().database.getAplication(aplication id)
+            show prewiev= new show(application);
             prewiev.getCancelButton().addActionListener(
                     m ->{ disposeSubPanel(prewiev);})
             ;
