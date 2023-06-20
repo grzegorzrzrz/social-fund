@@ -151,7 +151,15 @@ public class App {
 
             for (var vector:
                     addFormPanel.getFormTableModel().getDataVector()) {
-                fields.add(new FormField(vector));
+                // check if any value is null
+                Boolean add = true;
+                for (var value:
+                        vector) {
+                    if (value == null) {
+                        add = false;
+                    }
+                }
+                if(add) fields.add(new FormField(vector));
             }
 
             Form newForm = new Form(addFormPanel.getFormName().getText(), addFormPanel.getFundName().getText(), fields);

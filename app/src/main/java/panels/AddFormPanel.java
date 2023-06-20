@@ -38,7 +38,7 @@ public class AddFormPanel extends BasePanel {
                     int lastRow = e.getLastRow();
                     if(lastRow + 1 == formTableModel.getRowCount())
                     {
-                        formTableModel.addRow(new Object[]{null,null,null});
+                        formTableModel.addRow(new Object[]{null,null,null,null});
                     }
                     else if(IsTableRowEmpty(lastRow))
                     {
@@ -57,7 +57,7 @@ public class AddFormPanel extends BasePanel {
         formTableModel.addColumn("value");
         formTableModel.addColumn("max length");
 
-        formTableModel.addRow(new Object[]{null,null,null});
+        formTableModel.addRow(new Object[]{null,null,null,null});
         JScrollPane scrollPane = new JScrollPane(formTable);
         formName = new InteractiveJTextField("Type the name of the new form");
         fundName = new InteractiveJTextField("Type the name of the fund");

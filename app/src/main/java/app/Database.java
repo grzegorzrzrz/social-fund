@@ -291,6 +291,23 @@ public class Database {
         return new Form(formName, fundName, fields);
     }
 
+    public String[] GetFundTypes() {
+        String sql = "SELECT nazwa_funduszu FROM typ_srodkow_encja_slownikowa";
+        try {
+            ResultSet rs = Select(sql);
+            ArrayList<String> fundTypes = new ArrayList<>();
+            while (rs.next()) {
+                fundTypes.add(rs.getString(1));
+            }
+            rs.close();
+            stmt.close();
+            con.close();
+            return fundTypes.toArray(new String[0]);
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
     public String[] GetFormTypes() {
         String sql = "SELECT nazwa_formularzu FROM typ_formularzu";
         try {
@@ -388,7 +405,13 @@ public class Database {
             fieldTypes += field.getType() + ",";
             fieldMaxLengths += field.getMaximumLength() + ",";
         }
-        String sql = "call DodajFormularz(" + form.getName() + ", '" + form.getFundName() + "', '" + fieldNames + "', '" + fieldTypes + "', '" + fieldMaxLengths + "')";
+        if(form.getFields().size() > 0) {
+            fieldNames = fieldNames.substring(0, fieldNames.length() - 1);
+            fieldTypes = fieldTypes.substring(0, fieldTypes.length() - 1);
+            fieldMaxLengths = fieldMaxLengths.substring(0, fieldMaxLengths.length() - 1);
+        }
+        String sql = "call DodajFormularz(\n'" + form.getName() + "',\n '" + form.getFundName() + "',\n '" + fieldNames + "',\n '" + fieldTypes + "',\n '" + fieldMaxLengths + "')";
+        System.out.println(sql);
         Procedure(sql);
         return "Successfully added a new form";
     }
@@ -471,6 +494,7 @@ public class Database {
         rs.next();
         return rs.getString(1);
     }
+
 
     /**
      * @param login user login
