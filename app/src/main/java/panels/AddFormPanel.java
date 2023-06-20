@@ -9,6 +9,7 @@ import javax.swing.event.TableModelEvent;
 import javax.swing.event.TableModelListener;
 import javax.swing.table.DefaultTableModel;
 import java.awt.*;
+import java.util.Vector;
 
 @Getter
 public class AddFormPanel extends BasePanel {
@@ -17,10 +18,11 @@ public class AddFormPanel extends BasePanel {
     private Boolean creatingPanel = true;
 
     private InteractiveJTextField formName;
-    private InteractiveJTextField fundName;
 
     private DefaultTableModel formTableModel;
-    public AddFormPanel(){
+
+    private JComboBox fundComboBox;
+    public AddFormPanel(String[] fundTypes){
         formTableModel = new DefaultTableModel() {
             @Override
             public boolean isCellEditable(int row, int column) {
@@ -36,9 +38,10 @@ public class AddFormPanel extends BasePanel {
                 if(e.getType() == TableModelEvent.UPDATE)
                 {
                     int lastRow = e.getLastRow();
-                    if(lastRow + 1 == formTableModel.getRowCount())
+                    if(lastRow + 1 == formTableModel.getRowCount() )
                     {
-                        formTableModel.addRow(new Object[]{null,null,null,null});
+                        if(!IsTableRowEmpty(lastRow))
+                            formTableModel.addRow(new Object[]{null,null,null,null});
                     }
                     else if(IsTableRowEmpty(lastRow))
                     {
@@ -60,12 +63,12 @@ public class AddFormPanel extends BasePanel {
         formTableModel.addRow(new Object[]{null,null,null,null});
         JScrollPane scrollPane = new JScrollPane(formTable);
         formName = new InteractiveJTextField("Type the name of the new form");
-        fundName = new InteractiveJTextField("Type the name of the fund");
+        fundComboBox = new JComboBox(fundTypes);
         JSplitPane splitPane = new JSplitPane();
         splitPane.setOrientation(JSplitPane.VERTICAL_SPLIT);
         splitPane.setEnabled(false);
         upperPanel.add(formName);
-        upperPanel.add(fundName);
+        upperPanel.add(fundComboBox);
         upperPanel.setLayout(new GridLayout(2,1,10,10));
         splitPane.setLeftComponent(upperPanel);
         splitPane.setRightComponent(scrollPane);
