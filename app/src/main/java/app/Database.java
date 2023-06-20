@@ -416,7 +416,8 @@ public class Database {
      * @param application application to be added to database
      */
     public void AddApplication(Application application, int userID) {
-        String sql = "call DodajWniosek('" + application.getForm().getFormTypeID() + "', '" + GetStringFromForm(application.getForm()) + "', " + userID + ")";
+        String sql = "call DodajWniosek(" + application.getForm().getFormTypeID() + ", '" + GetStringFromForm(application.getForm()) + "', " + userID + ")";
+       AddUserIncome(userID,application.form.fields.get(0).value);
         System.out.println(sql);
         Procedure(sql);
     }
