@@ -10,8 +10,6 @@ import javax.swing.event.TableModelEvent;
 import javax.swing.event.TableModelListener;
 import javax.swing.table.DefaultTableModel;
 import java.awt.*;
-import java.util.Vector;
-
 @Getter
 public class AddFormPanel extends BasePanel {
     public JTable formTable;
@@ -24,7 +22,6 @@ public class AddFormPanel extends BasePanel {
 
     private JComboBox fundComboBox;
     public AddFormPanel(String[] fundTypes){
-    public AddFormPanel(){
         setPreferredSize(Settings.getInstance().BIG_WINDOW_PREFERRED_SIZE);
         setMinimumSize(Settings.getInstance().BIG_WINDOW_MIN_SIZE);
         setLocation(Settings.getInstance().BIG_WINDOW_LOCATION_X, Settings.getInstance().BIG_WINDOW_LOCATION_Y);
