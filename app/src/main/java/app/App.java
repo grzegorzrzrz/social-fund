@@ -105,6 +105,12 @@ public class App {
             String formid= chose.getForm_id().getItemAt(chose.getForm_id().getSelectedIndex());
             Application application= new Application();
             application.form=Settings.getInstance().database.GetFormByName(formid);
+            java.util.Vector pom=new java.util.Vector();
+            pom.add("dochód na członka rodziny");
+            pom.add("Int");
+            pom.add("0");
+            pom.add("30");
+            application.getForm().getFields().add(new FormField(pom));
             chose.dispose();
             fillAplication fill =new fillAplication(application);
             fill.getCancelButton().addActionListener(m ->disposeSubPanel(fill));
@@ -156,12 +162,6 @@ public class App {
         addFormPanel.getCancelButton().addActionListener(e-> disposeSubPanel(addFormPanel));
         addFormPanel.getAcceptButton().addActionListener(e ->{
             ArrayList<FormField> fields = new ArrayList<>();
-            java.util.Vector pom=new java.util.Vector();
-            pom.add("dochód na członka rodziny");
-            pom.add("Int");
-            pom.add(0);
-            pom.add(30);
-            fields.add(new FormField(pom));
             for (var vector:
                     addFormPanel.getFormTableModel().getDataVector()) {
                 // check if any value is null

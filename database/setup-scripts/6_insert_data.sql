@@ -30,7 +30,7 @@ p_login => 'marekm',
 p_haslo => 'pog',
 p_imie => 'Marek',
 p_nazwisko => 'Most',
-p_pozycja => 'Kierownik',
+p_firma => 'ACompany',
 p_pesel => '12345678911',
 p_data_urodzenia => TO_DATE('1990-01-02', 'YYYY-MM-DD')
 );
@@ -40,7 +40,7 @@ p_login => 'kasiar',
 p_haslo => 'hello123',
 p_imie => 'Kasia',
 p_nazwisko => 'Kowalska',
-p_pozycja => 'Specjalista',
+p_firma => 'BCompany',
 p_pesel => '98765432199',
 p_data_urodzenia => TO_DATE('1985-06-12', 'YYYY-MM-DD')
 );
@@ -50,7 +50,7 @@ p_login => 'adamw',
 p_haslo => 'qwerty',
 p_imie => 'Adam',
 p_nazwisko => 'Wojcik',
-p_pozycja => 'Analityk',
+p_firma => 'CCompany',
 p_pesel => '45678912322',
 p_data_urodzenia => TO_DATE('1988-09-25', 'YYYY-MM-DD')
 );
@@ -60,7 +60,7 @@ p_login => 'magdab',
 p_haslo => 'haslo123',
 p_imie => 'Magda',
 p_nazwisko => 'Blaszczyk',
-p_pozycja => 'Dyrektor',
+p_firma => 'DCompany',
 p_pesel => '11122233344',
 p_data_urodzenia => TO_DATE('1976-03-14', 'YYYY-MM-DD')
 );

@@ -5,7 +5,7 @@ CREATE OR REPLACE PROCEDURE DodajWnioskodawce (
   p_haslo            IN VARCHAR2,
   p_imie             IN VARCHAR2,
   p_nazwisko         IN VARCHAR2,
-  p_pozycja          IN VARCHAR2,
+  p_firma          IN VARCHAR2,
   p_pesel            IN VARCHAR2,
   p_data_urodzenia   IN DATE
 ) AS
@@ -16,7 +16,7 @@ BEGIN
   RETURNING id_uzytkownika INTO v_id_uzytkownika;
 
   INSERT INTO Wnioskodawcy (id_uzytkownika, firma, pesel, data_urodzenia)
-  VALUES (v_id_uzytkownika, p_pozycja, p_pesel, p_data_urodzenia);
+  VALUES (v_id_uzytkownika, p_firma, p_pesel, p_data_urodzenia);
 
   COMMIT;
   DBMS_OUTPUT.PUT_LINE('Nowy uzytkownik wnioskodawca zostal dodany do bazy danych.');
@@ -155,13 +155,13 @@ END;
 
 --/
 CREATE OR REPLACE PROCEDURE DezaktywujFormularz (
-  p_id_formularzu      IN NUMBER
+  p_nazwa_formularzu      IN VARCHAR2
 ) AS
 BEGIN
 
 UPDATE typ_formularzu
 SET czy_aktywny = 0
-WHERE id_formularzu = p_id_formularzu;
+WHERE nazwa_formularzu = p_nazwa_formularzu;
 
   COMMIT;
   DBMS_OUTPUT.PUT_LINE('Pomyslnie dezaktywowano formularz.');

@@ -407,7 +407,6 @@ public class Database {
             fieldMaxLengths = fieldMaxLengths.substring(0, fieldMaxLengths.length() - 1);
         }
         String sql = "call DodajFormularz(\n'" + form.getName() + "',\n '" + form.getFundName() + "',\n '" + fieldNames + "',\n '" + fieldTypes + "',\n '" + fieldMaxLengths + "')";
-        System.out.println(sql);
         Procedure(sql);
         return "Successfully added a new form";
     }
@@ -416,9 +415,9 @@ public class Database {
      * @param application application to be added to database
      */
     public void AddApplication(Application application, int userID) {
+        AddUserIncome(userID,application.form.fields.get(application.form.fields.size() - 1).value);
+        application.form.fields.remove(application.form.fields.size() - 1);
         String sql = "call DodajWniosek(" + application.getForm().getFormTypeID() + ", '" + GetStringFromForm(application.getForm()) + "', " + userID + ")";
-       AddUserIncome(userID,application.form.fields.get(0).value);
-        System.out.println(sql);
         Procedure(sql);
     }
 
