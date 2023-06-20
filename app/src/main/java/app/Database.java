@@ -354,7 +354,7 @@ public class Database {
                 String formName = rs.getString(1);
                 int formTypeID = rs.getInt(2);
                 ArrayList<FormField> formFields = GetFormFields(formTypeID);
-                return new Form(id, formName, "", formFields);
+                return new Form(0, id, "", formFields);
             }
             return null;
         } catch (SQLException e) {
