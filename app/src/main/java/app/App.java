@@ -136,8 +136,7 @@ public class App {
             Showapplications.dispose();
             show prewiev= new show(application);
             prewiev.getCancelButton().addActionListener(
-                    m ->{ disposeSubPanel(prewiev);})
-            ;
+                    m ->{ disposeSubPanel(prewiev);});
         });
 
 
