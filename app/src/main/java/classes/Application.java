@@ -4,8 +4,8 @@ import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
-
-import java.sql.Date;
+import java.time.LocalDate;
+import java.util.Date;
 
 @AllArgsConstructor(access= AccessLevel.PUBLIC)
 @Getter
@@ -14,8 +14,8 @@ public class Application{
     public Application()
     {
         applicant = new Applicant();
-        status="denied";
-        creationDate=new Date(2023,11,3);
+        status="Oczekujacy";
+        creationDate=new Date(System.currentTimeMillis());
         form= new Form();
     };
 
