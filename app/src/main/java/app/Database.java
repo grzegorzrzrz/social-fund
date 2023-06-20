@@ -354,7 +354,7 @@ public class Database {
                 String formName = rs.getString(1);
                 int formTypeID = rs.getInt(2);
                 ArrayList<FormField> formFields = GetFormFields(formTypeID);
-                return new Form(0, name, "", formFields);
+                return new Form(formTypeID, name, "", formFields);
             }
             return null;
         } catch (SQLException e) {
@@ -473,10 +473,11 @@ public class Database {
      * @return encoded form
      */
     private String GetStringFromForm(Form form) {
-        String encodedFields = form.getName() + ";";
+        String encodedFields =  "";
         for (FormField field : form.getFields()) {
-            encodedFields += field.getName() + ":" + field.getValue() + ":" + field.getType() + ":" + field.getMaximumLength() + ";";
+            encodedFields += field.getType() + ":" + field.getValue() + ":" + field.getName() + ":" + field.getMaximumLength() + ";";
         }
+        encodedFields = encodedFields.substring(0, encodedFields.length() - 1);
         return encodedFields;
     }
 
