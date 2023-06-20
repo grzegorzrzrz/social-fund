@@ -346,8 +346,8 @@ public class Database {
         }
     }
 
-    public Form GetFormById(int id){
-        String sql = "select * from typ_formularzu WHERE czy_aktywny = 1 AND id_formularzu="+id;
+    public Form GetFormbyname(String id){
+        String sql = "select * from typ_formularzu WHERE nazwa_formularzu="+id;
         try {
             ResultSet rs = Select(sql);
             while (rs.next()) {

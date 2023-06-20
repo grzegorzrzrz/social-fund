@@ -3,6 +3,7 @@ package panels;
 import lib.BasePanel;
 import lib.InteractiveJPasswordField;
 import lib.InteractiveJTextField;
+import lib.Settings;
 import lombok.Getter;
 
 import javax.swing.*;
@@ -12,13 +13,13 @@ import static javax.swing.JSplitPane.HORIZONTAL_SPLIT;
 @Getter
 
 public class chooseform extends BasePanel {
-        private InteractiveJTextField form_id;
+        private JComboBox<String> form_id;
     private JTextArea form;
         public chooseform()
         {
             form = new JTextArea("which form would you like to fullfill?:");
             form.setEditable(false);
-            form_id = new InteractiveJTextField("Type the form id");
+            form_id = new JComboBox<String>(Settings.getInstance().database.GetActiveFormTypes());
             JSplitPane upperSplitPane7 = new JSplitPane();
             upperSplitPane7.setResizeWeight(0.5);
             upperSplitPane7.setOrientation(HORIZONTAL_SPLIT);

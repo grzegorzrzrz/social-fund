@@ -100,30 +100,25 @@ public class App {
         chooseform chose =new chooseform();
         chose.getCancelButton().addActionListener(e -> disposeSubPanel(chose));
         chose.getAcceptButton().addActionListener(e -> {
-            int formid= Integer.valueOf(chose.getForm_id().getText());
+            String formid= chose.getForm_id().getItemAt(chose.getForm_id().getSelectedIndex());
             Application application= new Application();
-            application.form=Settings.getInstance().database.GetFormById(formid);
-            if (application.form==null)
-            {
-                disposeSubPanel(chose);
-
-            }
-            else
-            {
+            application.form=Settings.getInstance().database.GetFormbyname(formid);
             chose.dispose();
             fillAplication fill =new fillAplication(application);
             fill.getCancelButton().addActionListener(m ->disposeSubPanel(fill));
             fill.getAcceptButton().addActionListener(m->{
                 for (int i=0;i<application.form.getFields().size();i++)
                 {
-                    application.form.fields.get(i).value=fill.pane.get(i).getLeftComponent().toString();
+                    application.form.fields.get(i).value=fill.pane.get(i).getRightComponent().toString();
                 }
-                disposeSubPanel(fill);
                 Settings.getInstance().database.AddApplication(application,user.getUserID());
+                handleMessagePanel(fill, "successful add application");
+
+
 
             });
 
-        }});
+       });
 
     }
 

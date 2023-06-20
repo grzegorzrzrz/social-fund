@@ -15,21 +15,21 @@ import static javax.swing.JSplitPane.HORIZONTAL_SPLIT;
 public class show  extends BasePanel {
 
 
-    private ArrayList<InteractiveJTextField> dane;
+    private ArrayList<JTextField> dane;
     private ArrayList<JLabel> opis;
     private ArrayList<JSplitPane> pane;
-    private InteractiveJTextField a;
+    private JTextField a;
 
     public show(Application application) {
 
                 setPreferredSize(Settings.getInstance().BIG_WINDOW_PREFERRED_SIZE);
                 setMinimumSize(Settings.getInstance().BIG_WINDOW_MIN_SIZE);
-                dane=new ArrayList<InteractiveJTextField>();
+                dane=new ArrayList<JTextField>();
                 opis =new ArrayList<JLabel>();
                 pane =new ArrayList<JSplitPane>();
                 setLocation(Settings.getInstance().BIG_WINDOW_LOCATION_X, Settings.getInstance().BIG_WINDOW_LOCATION_Y);
                 for (int i=0;i<application.form.getFields().size();i++)
-                { a =new InteractiveJTextField(application.getForm().getFields().get(i).getValue());
+                { a =new JTextField(application.getForm().getFields().get(i).getValue());
                     a.setEditable(false);
                     JLabel b=new JLabel(application.getForm().getFields().get(i).getName());
                     JSplitPane c= new JSplitPane();
