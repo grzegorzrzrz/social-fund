@@ -73,11 +73,8 @@ public class App {
     }
 
     private void ChooseAnApplicationToView() {
-        Vector<Pair<Integer, Date>> temp = new Vector<Pair<Integer, Date>>();
-        //Pair<Integer, Date> aha = Pair.of(1, new Date(10000));
-        temp.add(Pair.of(1, new Date(10000)));
-        temp.add(Pair.of(2, new Date(1000000000)));
-        ChooseApplicationToView chooseApplicationToView = new ChooseApplicationToView(temp);
+        Vector<Pair<Integer, Date>> pendingApplications = Settings.getInstance().database.GetPendingApplications();
+        ChooseApplicationToView chooseApplicationToView = new ChooseApplicationToView(pendingApplications);
         chooseApplicationToView.getCancelButton().addActionListener(e -> disposeSubPanel(chooseApplicationToView));
         chooseApplicationToView.getAcceptButton().addActionListener(e ->{
         Integer chosenID = (Integer) chooseApplicationToView.getApplicationsBox().getSelectedItem();
@@ -87,8 +84,8 @@ public class App {
     }
 
     private void DoProcessAnApplication(Integer chosenID) {
-        Application temp = new Application();
-        ProcessAnApplication processAnApplication = new ProcessAnApplication(temp);
+        Application selectedApplication = Settings.getInstance().database.GetApplicationInfo(chosenID);
+        ProcessAnApplication processAnApplication = new ProcessAnApplication(selectedApplication);
 
         processAnApplication.getCancelButton().addActionListener(e -> {
             processAnApplication.dispose();
@@ -137,11 +134,11 @@ public class App {
 
     }
     private void DeactivateForm() {
-        DeactivateFormPanel deactivateFormPanel = new DeactivateFormPanel((Settings.getInstance().mockDatabase.getFormNames()).toArray(new String[0]));
+        DeactivateFormPanel deactivateFormPanel = new DeactivateFormPanel((Settings.getInstance().database.GetActiveFormTypes()));
         deactivateFormPanel.getCancelButton().addActionListener(e -> disposeSubPanel(deactivateFormPanel));
         deactivateFormPanel.getAcceptButton().addActionListener(e ->{
-            String formName = (String)deactivateFormPanel.getChooseForm().getSelectedItem();
-            String message = Settings.getInstance().mockDatabase.disableForm(formName);
+            String formType = (String)deactivateFormPanel.getChooseForm().getSelectedItem();
+            String message = Settings.getInstance().database.DisableForm(formType);
             handleMessagePanel(deactivateFormPanel, message);
         });
     }
@@ -158,8 +155,8 @@ public class App {
             }
 
             Form newForm = new Form(addFormPanel.getFormName().getText(), addFormPanel.getFundName().getText(), fields);
-            //String message = Settings.getInstance().database.CreateNewForm(addFormPanel.getFormName().getText(), addFormPanel.getFormTableModel().getDataVector());
-            //handleMessagePanel(addFormPanel, message);
+            String message = Settings.getInstance().database.AddForm(newForm);
+            handleMessagePanel(addFormPanel, message);
         });
     }
 

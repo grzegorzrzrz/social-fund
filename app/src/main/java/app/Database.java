@@ -5,6 +5,7 @@ import org.apache.commons.lang3.tuple.Pair;
 
 import java.sql.*;
 import java.util.ArrayList;
+import java.util.Dictionary;
 import java.util.Vector;
 
 public class Database {
@@ -58,6 +59,7 @@ public class Database {
         try {
             Class.forName("oracle.jdbc.driver.OracleDriver");
             con = DriverManager.getConnection(DBURL, DBUSERNAME, DBPASSWORD);
+
             stmt = con.createStatement();
             stmt.execute(procedure);
             stmt.close();
@@ -77,13 +79,13 @@ public class Database {
     }
 
      /**
-     * @param userID id of user
+     * @param user id of user
      * @return Array of integers with all form types ids
      */
-    public Vector<Pair<Integer, Date>> GetApplicationsByUserID(int userID) {
+    public Vector<Pair<Integer, Date>> GetApplicationsByUser(User user) {
         String sql = "select id_wniosku, data_zlozenia" +
                 "from WNIOSEK" +
-                "where id_uzytkownika=" + userID;
+                "where id_uzytkownika=" + user.getUserID();
         return GetApplicationsVector(sql);
     }
 
@@ -91,18 +93,19 @@ public class Database {
      * @return Array of integers with all form types ids
      */
     public Vector<Pair<Integer, Date>>  GetPendingApplications() {
-        String sql = "select id_wniosku, data_zlozenia" +
+        String sql = "select id_wniosku, data_zlozenia " +
                 "from WNIOSEK" +
-                "where status='Rozpatrywany'";
+                " where status='Oczekujacy'";
         return GetApplicationsVector(sql);
     }
 
     /**
      * @return Array of integers with all form types ids
      */
-    public void DeactivateFormType(int formID) {
-        String sql = "UPDATE typ SET status = 'Nieaktywny' WHERE id_typu_wniosku = " + formID;
-        Dml(sql);
+    public String DisableForm(String formName) {
+        String sql = "call DezaktywujFormularz ('" + formName + "')";
+        Procedure(sql);
+        return "Pomyslnie dezaktywowano formularz.";
     }
 
     /**
@@ -130,14 +133,18 @@ public class Database {
      * @return application with given id
      */
     public Application GetApplicationInfo(int applicationID) {
-        String sql = "SELECT * FROM WNIOSEK WHERE id_wniosku = " + applicationID;
+        String sql = "SELECT pol.TYP_SRODKOW_ENCJA_SLOWNIKOWA_NAZWA_FUNDUSZU, form.nazwa_formularzu, w.status, w.data_zlozenia, w.zawartosc_formularza, w.wnioskodawcy_id_uzytkownika FROM WNIOSEK" +
+                " w join typ_formularzu form on w.typ_formularzu_id_formularzu = form.id_formularzu" +
+                " join polaczenie_pomiedzy_formularzami_a_typem_srodkow pol on form.id_formularzu = pol.typ_formularzu_id_formularzu" +
+                " where w.id_wniosku = " + applicationID;
+
         Application application = GetApplicationInfo(sql).get(0);
         return application;
     }
     public Applicant GetApplicantInfo(int applicantID) {
         Applicant applicant = new Applicant();
         applicant.setId(applicantID);
-        String sql = "SELECT * FROM wnioskodawcy WHERE wnioskodawcy_id_uzytkownika = " + applicantID;
+        String sql = "SELECT * FROM wnioskodawcy WHERE id_uzytkownika = " + applicantID;
         GetApplicant(sql, applicant);
         sql = "SELECT dochod_na_czlonka_rodziny FROM oswiadczenie_zarobkowe WHERE wnioskodawcy_id_uzytkownika = " + applicantID;
         GetEarnings(sql, applicant);
@@ -180,10 +187,12 @@ public class Database {
      * @return applications with given id
      */
     public ArrayList<Application> GetApplicationInfo(Date startDate, Date endDate, String status) {
-        String sql = "SELECT * FROM WNIOSEK WHERE  data_zlozenia >= TO_DATE('" +
-                startDate + "','YYYY-MM-DD') AND data_zlozenia <= TO_DATE('" + endDate + "','YYYY-MM-DD')";
+        String sql = "SELECT pol.TYP_SRODKOW_ENCJA_SLOWNIKOWA_NAZWA_FUNDUSZU, form.nazwa_formularzu, w.status, w.data_zlozenia, w.zawartosc_formularza, w.wnioskodawcy_id_uzytkownika FROM WNIOSEK" +
+                " w join typ_formularzu form on w.typ_formularzu_id_formularzu = form.id_formularzu" +
+                " join polaczenie_pomiedzy_formularzami_a_typem_srodkow pol on form.id_formularzu = pol.typ_formularzu_id_formularzu" +
+                " where w.data_zlozenia >= TO_DATE('" + startDate + "','YYYY-MM-DD') AND w.data_zlozenia <= TO_DATE('" + endDate + "','YYYY-MM-DD')";
         if (!status.equals("Any")) {
-            sql += " AND status = '" + status + "'";
+            sql += " AND w.status = '" + status + "'";
         }
         return GetApplicationInfo(sql);
     }
@@ -250,11 +259,11 @@ public class Database {
      * @throws SQLException wrong sql query
      */
     private Application GetApplicationFromResult(ResultSet rs) throws SQLException {
-        String fund = rs.getString(1);
-        int applicationID = rs.getInt(2);
+        String fundName = rs.getString(1);
+        String formName = rs.getString(2);
         String status = rs.getString(3);
         Date creationDate = rs.getDate(4);
-        Form form = GetFormFromString(rs.getString(5));
+        Form form = GetFormFromString(formName, fundName, rs.getString(5));
         int applicantID = rs.getInt(6);
         Application application = new Application(GetApplicantInfo(applicantID), status, creationDate, form);
         return application;
@@ -265,20 +274,17 @@ public class Database {
      * @param encodedFields encoded form
      * @return decoded form
      */
-    private Form GetFormFromString(String encodedFields) throws SQLException {
+    private Form GetFormFromString(String formName, String fundName, String encodedFields) throws SQLException {
         ArrayList<FormField> fields = new ArrayList<>();
         String[] fieldsArray = encodedFields.split(";");
-        int formTypeID = Integer.parseInt(fieldsArray[0]);
-        String formName = GetFormName(formTypeID);
-        String fundName = fieldsArray[1];
 
-        for (int i = 2; i < fieldsArray.length; i++) {
+        for (int i = 0; i < fieldsArray.length; i++) {
             String[] fieldParts = fieldsArray[i].split(":");
-            int fieldID = Integer.parseInt(fieldParts[0]);
-            String value = fieldParts[1];
-            String name = fieldParts[2];
-            String type = fieldParts[3];
-            int maximumLength = Integer.parseInt(fieldParts[4]);
+            String value = fieldParts[0];
+            String name = fieldParts[1];
+            String type = fieldParts[2];
+            int maximumLength = 0;
+            if (fieldParts.length > 3) maximumLength = Integer.parseInt(fieldParts[3]);
             FormField formField = new FormField(name, type, value, maximumLength);
             fields.add(formField);
         }
@@ -287,6 +293,24 @@ public class Database {
 
     public String[] GetFormTypes() {
         String sql = "SELECT nazwa_formularzu FROM typ_formularzu";
+        try {
+            ResultSet rs = Select(sql);
+            ArrayList<String> formTypes = new ArrayList<>();
+            while (rs.next()) {
+                formTypes.add(rs.getString(1));
+            }
+            rs.close();
+            stmt.close();
+            con.close();
+            return formTypes.toArray(new String[0]);
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public String[] GetActiveFormTypes() {
+        //czy_aktywny is a number
+        String sql = "SELECT nazwa_formularzu FROM typ_formularzu WHERE czy_aktywny = 1";
         try {
             ResultSet rs = Select(sql);
             ArrayList<String> formTypes = new ArrayList<>();

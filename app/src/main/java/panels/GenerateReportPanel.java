@@ -15,7 +15,7 @@ import java.util.GregorianCalendar;
 public class GenerateReportPanel extends BasePanel {
     // generates report based on two dropdowns: status and form type and date range
     // dropdowns variables
-    public String[] statusDropdownChoices = {"Any", "Pending", "Approved", "Rejected"};
+    public String[] statusDropdownChoices = {"Any", "Oczekujacy", "Odrzucony", "Zaakceptowany"};
     public JComboBox statusDropdown;
     public JComboBox formTypeDropdown;
     // two choose date  boxes

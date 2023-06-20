@@ -88,7 +88,7 @@ public class ProcessAnApplication extends BasePanel {
         applicationTableModel.addColumn("type");
         for (var field:
              application.form.fields) {
-            applicationTableModel.addRow(new Object[]{field.getValue(), field.getValue()});
+            applicationTableModel.addRow(new Object[]{field.getName(), field.getValue()});
         }
 
     }
