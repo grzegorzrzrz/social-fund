@@ -2,6 +2,7 @@ package panels;
 
 import lib.BasePanel;
 import lib.InteractiveJTextField;
+import lib.Settings;
 import lombok.Getter;
 
 import javax.swing.*;
@@ -23,6 +24,11 @@ public class AddFormPanel extends BasePanel {
 
     private JComboBox fundComboBox;
     public AddFormPanel(String[] fundTypes){
+    public AddFormPanel(){
+        setPreferredSize(Settings.getInstance().BIG_WINDOW_PREFERRED_SIZE);
+        setMinimumSize(Settings.getInstance().BIG_WINDOW_MIN_SIZE);
+        setLocation(Settings.getInstance().BIG_WINDOW_LOCATION_X, Settings.getInstance().BIG_WINDOW_LOCATION_Y);
+
         formTableModel = new DefaultTableModel() {
             @Override
             public boolean isCellEditable(int row, int column) {
