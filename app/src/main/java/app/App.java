@@ -1,6 +1,7 @@
 package app;
 
 import classes.*;
+import lib.InteractiveJTextField;
 import lib.Settings;
 import org.apache.commons.lang3.tuple.Pair;
 import panels.*;
@@ -13,6 +14,7 @@ import java.sql.Date;
 import java.util.ArrayList;
 
 import java.util.Vector;
+
 
 public class App {
     public int debugLoginUser = -1; // TODO REMOVE change this to login without database
@@ -102,14 +104,14 @@ public class App {
         chose.getAcceptButton().addActionListener(e -> {
             String formid= chose.getForm_id().getItemAt(chose.getForm_id().getSelectedIndex());
             Application application= new Application();
-            application.form=Settings.getInstance().database.GetFormbyname(formid);
+            application.form=Settings.getInstance().database.GetFormByName(formid);
             chose.dispose();
             fillAplication fill =new fillAplication(application);
             fill.getCancelButton().addActionListener(m ->disposeSubPanel(fill));
             fill.getAcceptButton().addActionListener(m->{
                 for (int i=0;i<application.form.getFields().size();i++)
                 {
-                    application.form.fields.get(i).value=fill.pane.get(i).getRightComponent().toString();
+                    application.form.fields.get(i).value= ((InteractiveJTextField)fill.pane.get(i).getRightComponent()).getText();
                 }
                 Settings.getInstance().database.AddApplication(application,user.getUserID());
                 handleMessagePanel(fill, "successful add application");

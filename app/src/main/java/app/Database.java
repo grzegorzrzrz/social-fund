@@ -133,7 +133,7 @@ public class Database {
      */
     public Application GetApplicationInfo(int applicationID) {
         String sql = "SELECT pol.TYP_SRODKOW_ENCJA_SLOWNIKOWA_NAZWA_FUNDUSZU, form.nazwa_formularzu, w.status, w.data_zlozenia," +
-                " w.zawartosc_formularza, w.wnioskodawcy_id_uzytkownika FROM WNIOSEK, w.typ_formularzu_id_formularzu" +
+                " w.zawartosc_formularza, w.wnioskodawcy_id_uzytkownika, w.typ_formularzu_id_formularzu FROM WNIOSEK" +
                 " w join typ_formularzu form on w.typ_formularzu_id_formularzu = form.id_formularzu" +
                 " join polaczenie_pomiedzy_formularzami_a_typem_srodkow pol on form.id_formularzu = pol.typ_formularzu_id_formularzu" +
                 " where w.id_wniosku = " + applicationID;
@@ -283,9 +283,9 @@ public class Database {
 
         for (int i = 0; i < fieldsArray.length; i++) {
             String[] fieldParts = fieldsArray[i].split(":");
-            String value = fieldParts[0];
-            String name = fieldParts[1];
-            String type = fieldParts[2];
+            String type = fieldParts[0];
+            String value = fieldParts[1];
+            String name = fieldParts[2];
             int maximumLength = 0;
             if (fieldParts.length > 3) maximumLength = Integer.parseInt(fieldParts[3]);
             FormField formField = new FormField(name, type, value, maximumLength);
@@ -346,15 +346,15 @@ public class Database {
         }
     }
 
-    public Form GetFormbyname(String id){
-        String sql = "select * from typ_formularzu WHERE nazwa_formularzu="+id;
+    public Form GetFormByName(String name){
+        String sql = "select * from typ_formularzu WHERE nazwa_formularzu = '" + name + "'";
         try {
             ResultSet rs = Select(sql);
             while (rs.next()) {
                 String formName = rs.getString(1);
                 int formTypeID = rs.getInt(2);
                 ArrayList<FormField> formFields = GetFormFields(formTypeID);
-                return new Form(0, id, "", formFields);
+                return new Form(0, name, "", formFields);
             }
             return null;
         } catch (SQLException e) {
@@ -416,7 +416,7 @@ public class Database {
      * @param application application to be added to database
      */
     public void AddApplication(Application application, int userID) {
-        String sql = "call DodajWniosek(" + application.getForm().getFormTypeID() + ", '" + GetStringFromForm(application.getForm()) + "', " + userID + ")";
+        String sql = "call DodajWniosek('" + application.getForm().getFormTypeID() + "', '" + GetStringFromForm(application.getForm()) + "', " + userID + ")";
         System.out.println(sql);
         Procedure(sql);
     }
