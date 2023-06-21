@@ -435,7 +435,7 @@ public class Database {
      * @param status status to be set
      * @param reviewerID id of reviewer
      */
-    private void SetApplicationStatus(int applicationID, String status, int reviewerID){
+    public void SetApplicationStatus(int applicationID, String status, int reviewerID){
         String sql = "call UstawStatusWniosku(" + applicationID + ", '" + status + "', " + reviewerID + ")";
         Procedure(sql);
     }

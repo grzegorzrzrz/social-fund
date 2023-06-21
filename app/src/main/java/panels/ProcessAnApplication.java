@@ -11,6 +11,7 @@ public class ProcessAnApplication extends BasePanel {
     public final JTable applicationTable;
     private final JLabel formName;
     private final JLabel fundName;
+    public final JButton rejectApplication;
 
     private final DefaultTableModel applicationTableModel;
     private final DefaultTableModel applicantTableModel;
@@ -31,7 +32,7 @@ public class ProcessAnApplication extends BasePanel {
         };
 
         JPanel upperPanel = new JPanel();
-
+        rejectApplication = new JButton("Reject an application");
 
         JTable applicantTable = new JTable(applicantTableModel);
         applicantTable.getTableHeader().setReorderingAllowed(false);
@@ -63,6 +64,9 @@ public class ProcessAnApplication extends BasePanel {
         getUpperPanel().add(mainSplitPane);
         FillFieldsWithData(application);
 
+        getBottomPanel().add(rejectApplication);
+        getBottomPanel().setLayout(new GridLayout(1,3,50,50));
+        getAcceptButton().setText("Accept an application");
 
         applicantScrollPane.getColumnHeader().setVisible(false);
         setVisible(true);

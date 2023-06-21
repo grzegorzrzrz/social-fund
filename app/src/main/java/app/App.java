@@ -93,6 +93,26 @@ public class App {
             ChooseAnApplicationToView();
         });
         processAnApplication.getAcceptButton().addActionListener(e ->{
+//SetApplicationStatus(int applicationID, String status, int reviewerID)
+            try
+            {
+                Settings.getInstance().database.SetApplicationStatus(chosenID, "Zaakceptowany", user.getUserID());
+                handleMessagePanel(processAnApplication, "Successfully set the application to accepted");
+            }
+            catch(RuntimeException exception)
+            {
+                handleMessagePanel(processAnApplication, "Could not set the application to accepted");
+            }
+            });
+        processAnApplication.rejectApplication.addActionListener(e ->{
+            try {
+                Settings.getInstance().database.SetApplicationStatus(chosenID, "Odrzucony", user.getUserID());
+                handleMessagePanel(processAnApplication, "Successfully set the application to rejected");
+            }
+            catch (RuntimeException exception)
+            {
+                handleMessagePanel(processAnApplication, "Could not set the application to rejected");
+            }
 
         });
     }
