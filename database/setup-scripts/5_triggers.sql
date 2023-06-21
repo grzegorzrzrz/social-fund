@@ -16,11 +16,9 @@ BEGIN
     :NEW.id_wniosku
   );
 
-  COMMIT;
   DBMS_OUTPUT.PUT_LINE('Rekord zostal dodany do historii zmian statusu wniosku.');
 EXCEPTION
   WHEN OTHERS THEN
-    ROLLBACK;
     DBMS_OUTPUT.PUT_LINE('Wystapil blad podczas dodawania rekordu do historii zmian statusu wniosku: ' || SQLERRM);
 END;
 /
