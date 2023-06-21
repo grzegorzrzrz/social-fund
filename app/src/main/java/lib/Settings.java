@@ -1,7 +1,6 @@
 package lib;
 
 import app.Database;
-import app.MockDatabase;
 
 import java.awt.*;
 
@@ -23,7 +22,6 @@ public final class Settings {
     public final int BIG_WINDOW_LOCATION_Y;
     public final int MESSAGE_WINDOW_LOCATION_X;
     public final int MESSAGE_WINDOW_LOCATION_Y;
-    public MockDatabase mockDatabase;
     public Database database;
     public Settings() {
         Dimension windowSize = Toolkit.getDefaultToolkit().getScreenSize();

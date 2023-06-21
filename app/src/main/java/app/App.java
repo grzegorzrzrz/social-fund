@@ -17,7 +17,6 @@ import java.util.Vector;
 
 
 public class App {
-    public int debugLoginUser = -1; // TODO REMOVE change this to login without database
     private User user;
 
     public App(){
@@ -244,12 +243,7 @@ public class App {
      *  gets information from database if login was successful.
      */
     private void Login() {
-        if(debugLoginUser != -1){//TODO REMOVE
-            user.setUserID(0);
-            user.setPermissionLevel(debugLoginUser);
-            Run();
-            return;
-        } else if (user.getPermissionLevel() == 0) {
+       if (user.getPermissionLevel() == 0) {
             LoginPanel loginPanel = new LoginPanel();
             loginPanel.getAcceptButton().addActionListener(e -> {
                 user.setLogin(loginPanel.getUsername().getText());
@@ -289,23 +283,6 @@ public class App {
      *             con - Takes 3 additional arguments with information about url, username and password to change database to which app connects to
      */
     public static void main(String[] args){
-//        if(args.length > 0)
-//        {
-//            if (args[0].equals("res"))
-//            {
-//                Settings.getInstance().database = new DatabaseBuilder().build();
-//                Settings.getInstance().database.initializeData();
-//            }
-//            else if (args[0].equals("con"))
-//            {
-//                Settings.getInstance().database = new DatabaseBuilder().setDBURL(args[1]).setDBUSERNAME(args[2]).setDBPASSWORD(args[3]).build();
-//                Settings.getInstance().database.initializeData();
-//            }
-//        }
-//
-//        else {
-//            Settings.getInstance().database = new DatabaseBuilder().build();
-//        }
         try {
 
             UIManager.setLookAndFeel("javax.swing.plaf.nimbus.NimbusLookAndFeel");
@@ -313,7 +290,6 @@ public class App {
         catch (Exception e){
             // will use the default "Metal" Look and Feel instead
         }
-        Settings.getInstance().mockDatabase = new MockDatabase();
         Settings.getInstance().database = new DatabaseBuilder().build();
         new App();
     }
